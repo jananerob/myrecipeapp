@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  instructions: MyText
+  prep_time: 1
+  cook_time: 1
+  is_private: false
+  calories: 1.5
+  user: one
+
+two:
+  title: MyString
+  instructions: MyText
+  prep_time: 1
+  cook_time: 1
+  is_private: false
+  calories: 1.5
+  user: two
