@@ -4,11 +4,11 @@
 
 <div id="recipes">
   <% @recipes.each do |recipe| %>
-    <%= render recipe %>
-    <p>
-      <%= link_to "Show this recipe", recipe %>
-    </p>
+    <%= link_to recipe, class: 'text-black text-decoration-none' do %>
+      <%= render recipe %>
+    <% end %>
   <% end %>
 </div>
-
-<%= link_to "New recipe", new_recipe_path %>
+<div class='d-grid fixed-bottom p-4'>
+  <%= link_to "New recipe", new_recipe_path, class: 'btn btn-primary py-3 rounded-pill shadow fs-6 fw-bold' %>
+</div>

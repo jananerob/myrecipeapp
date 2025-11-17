@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detailed Notes and Issue Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles to refine the table appearance */
+        .styled-table {
+            border-collapse: collapse;
+        }
+        .styled-table th, .styled-table td {
+            border: 1px solid theme('colors.gray.200'); /* Use a subtle border */
+            padding: 1rem;
+        }
+        .styled-table thead th {
+            /* **OPRAVA:** Nahradená theme() funkciou priamymi hodnotami pre zabezpečenie viditeľnosti */
+            background-color: #3730a3; /* Ekvivalent indigo-700 */
+            color: white;
+            text-align: center;
+        }
+        .styled-table tbody tr:nth-child(even) {
+            /* Subtle zebra striping */
+            background-color: theme('colors.purple.50');
+        }
+        .placeholder {
+            color: theme('colors.gray.500'); /* Subtle grey for placeholder text */
+            font-style: italic;
+        }
+    </style>
+</head>
+<body class="bg-purple-50 text-gray-800 p-4 sm:p-8">
+
+    <div class="max-w-6xl mx-auto bg-white shadow-xl rounded-lg p-6 sm:p-10 border border-purple-200">
+
+        <h1 class="text-4xl font-extrabold text-indigo-700 border-b-4 border-orange-400 pb-3 mb-6 flex items-center">
+            <span class="mr-3">📝</span> Detailed Tracker for Issues, Notes, and Usage
+        </h1>
+        
+        <p class="text-lg mb-8 text-gray-600">
+            A comprehensive table structure for tracking issues, code snippets, notes, and the context of their usage within the project (e.g., Recipe Management).
+        </p>
+
+        <table class="styled-table w-full text-left text-lg shadow-lg">
+            <thead>
+                <tr>
+                    <th class="w-12 text-center">#</th>
+                    <th class="w-1/5">Issue</th>
+                    <th class="w-1/2">Note</th>
+                    <th class="w-1/4">Usage Context</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="hover:bg-purple-100 transition duration-150">
+                    <td class="text-center font-bold">1</td>
+                    <td class="placeholder">Authentication Error (Devise)</td>
+                    <td class="placeholder">Solution for 'Can't verify authenticity token' in Rails API-only configuration.</td>
+                    <td class="placeholder">User Auth (Devise setup)</td>
+                </tr>
+                <tr class="hover:bg-purple-100 transition duration-150">
+                    <td class="text-center font-bold">2</td>
+                    <td class="placeholder">Image Generation Timeout</td>
+                    <td class="placeholder">Increased timeout limit for the external AI image generation request to 30 seconds.</td>
+                    <td class="placeholder">AI Feature (Image Generator)</td>
+                </tr>
+                <tr class="hover:bg-purple-100 transition duration-150">
+                    <td class="text-center font-bold">3</td>
+                    <td class="placeholder">Recipe Filtering Logic</td>
+                    <td class="placeholder">SQL query syntax for filtering recipes by multiple Tags (using a join table).</td>
+                    <td class="placeholder">Recipe Management (Tag Filtering)</td>
+                </tr>
+                <tr class="hover:bg-purple-100 transition duration-150">
+                    <td class="text-center font-bold">4</td>
+                    <td class="placeholder">Missing Tag Index</td>
+                    <td class="placeholder">Need to add a database index to the `name` column of the `tags` table for faster lookups.</td>
+                    <td class="placeholder">Models (Tag optimization)</td>
+                </tr>
+                <tr class="hover:bg-purple-100 transition duration-150">
+                    <td class="text-center font-bold">5</td>
+                    <td class="placeholder">Comparison vs Numericality</td>
+                    <td class="placeholder">
+                        - comparison: { greater_than: 0 }: Zabezpečí, že hodnota je väčšia ako nula. To je správne. <br>
+                        - numericality: true: Zabezpečí, že hodnota je číslo (float alebo integer). <br>
+                        - Aby ste zabránili používateľovi zadať text (čo by pri amount:float spôsobilo chybu), <br>
+                        mali by ste použiť obidve validácie, alebo ideálne použiť rozšírenú verziu numericality, <br>
+                        ktorá už v sebe zahŕňa kontrolu, či je to číslo.
+</td>
+                    <td class="placeholder">Models (Tag optimization)</td>
+                </tr>
+                <tr class="hover:bg-purple-100 transition duration-150">
+                    <td class="text-center font-bold">6</td>
+                    <td class="placeholder">find_or_create_by!</td>
+                    <td class="placeholder">Používame Ingredient.find_or_create_by!(name: ingredient_name), aby sme zabránili duplicitám, ak by sa seeds spúšťali viackrát.</td>
+                    <td class="placeholder">seed.rb</td>
+                </tr>
+                <tr class="hover:bg-purple-100 transition duration-150">
+                    <td class="text-center font-bold">6</td>
+                    <td class="placeholder">find_or_create_by!</td>
+                    <td class="placeholder">xxxxxxxx</td>
+                    <td class="placeholder">seed.rb</td>
+                </tr>
+                <tr class="hover:bg-purple-100 transition duration-150">
+                    <td class="text-center font-bold">6</td>
+                    <td class="placeholder">find_or_create_by!</td>
+                    <td class="placeholder">xxxxxxxx</td>
+                    <td class="placeholder">seed.rb</td>
+                </tr>
+                <tr class="hover:bg-purple-100 transition duration-150">
+                    <td class="text-center font-bold">6</td>
+                    <td class="placeholder">find_or_create_by!</td>
+                    <td class="placeholder">xxxxxxxx</td>
+                    <td class="placeholder">seed.rb</td>
+                </tr>
+                </tbody>
+        </table>
+
+    </div>
+
+</body>
+</html>
