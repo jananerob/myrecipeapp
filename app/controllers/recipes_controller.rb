@@ -4,9 +4,18 @@ class RecipesController < ApplicationController
 
   # GET /recipes
   def index
-    @recipes = Recipe.all
+    @recipes = Recipe.where(is_public: true)
+    if user_signed_in? 
+      @recipes = @recipes.or(Recipe.where(user: current_user))
+    end
   end
 
+  def my_recipes
+    @recipes = current_user.recipes
+  end
+
+  def cookbook
+  end
   # GET /recipes/1
   def show
   end
