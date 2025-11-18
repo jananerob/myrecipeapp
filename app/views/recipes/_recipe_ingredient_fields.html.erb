@@ -1,0 +1,41 @@
+<% # app/views/recipes/_recipe_ingredient_fields.html.erb %>
+<% # Vstupujúce premenné: recipe_ingredient (objekt RecipeIngredient), all_ingredients (kolekcia Ingredient.all) %>
+
+<% data_prefix = "recipe[recipe_ingredients_data][]" %>
+
+<div class="ingredient-field-set" data-id="<%= recipe_ingredient.object_id %>">
+<% # Kľúč je 'recipe[recipe_ingredients_data][]' - to zabezpečí, že dáta prídu ako POLE HASHOV %>
+  <% # KĽÚČOVÉ DOPLNENIE: Ak má ingrediencia ID (bola už uložená), pošle ho %>
+  <%= hidden_field_tag "#{data_prefix}[id]", recipe_ingredient.id if recipe_ingredient.persisted? %>
+  <% # KĽÚČOVÉ DOPLNENIE: Ak chceme, aby sa záznam ZMAZAL (po kliknutí na Remove) %>
+  <% # Keď je pole schované (hidden), má hodnotu 0. Ak chceme zmazať, JS by ho mal prepnúť na 1. %>
+  <%= hidden_field_tag "#{data_prefix}[_destroy]", 0, class: 'destroy-field' %>
+
+  <div class="field-row">
+
+    <label>Ingredient</label>
+    <%= select_tag "#{data_prefix}[ingredient_id]", 
+        options_from_collection_for_select(all_ingredients, :id, :name, recipe_ingredient.ingredient_id), 
+        { include_blank: "Select ingredient", class: 'ingredient-select' }
+    %>
+
+    <label>Amount</label>
+    <%= number_field_tag "#{data_prefix}[amount]", 
+        recipe_ingredient.amount, 
+        min: 0
+    %>
+
+    <label>Unit</label>
+    <%= select_tag "#{data_prefix}[unit]", 
+        options_for_select(
+            RecipeIngredient.units.keys.map { |key| [RecipeIngredient.human_attribute_name("unit.#{key}"), key] }, 
+        recipe_ingredient.unit
+        ),
+        { include_blank: "Select unit", class: 'form-select' }
+    %>
+
+    <button type="button" class="remove-ingredient-button">Remove</button>
+  </div>
+
+  <hr>
+</div>

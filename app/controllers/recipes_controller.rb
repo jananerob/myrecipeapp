@@ -1,5 +1,6 @@
 class RecipesController < ApplicationController
-  before_action :set_recipe, only: %i[ show edit update destroy ]
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
+  before_action :set_recipe, only: [:show, :edit, :update, :destroy]
 
   # GET /recipes
   def index
@@ -21,9 +22,11 @@ class RecipesController < ApplicationController
 
   # POST /recipes
   def create
-    @recipe = Recipe.new(recipe_params)
+    @recipe = current_user.recipes.build(recipe_params)
 
     if @recipe.save
+      process_ingredients_for(@recipe)
+
       redirect_to @recipe, notice: "Recipe was successfully created."
     else
       render :new, status: :unprocessable_entity
@@ -33,6 +36,8 @@ class RecipesController < ApplicationController
   # PATCH/PUT /recipes/1
   def update
     if @recipe.update(recipe_params)
+      process_ingredients_for(@recipe)
+
       redirect_to @recipe, notice: "Recipe was successfully updated.", status: :see_other
     else
       render :edit, status: :unprocessable_entity
@@ -46,13 +51,30 @@ class RecipesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_recipe
-      @recipe = Recipe.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_recipe
+    @recipe = Recipe.find(params[:id])
+  end
 
-    # Only allow a list of trusted parameters through.
-    def recipe_params
-      params.require(:recipe).permit(:title, :instructions, :prep_time, :cook_time, :is_private, :calories, :user_id)
+  # Only allow a list of trusted parameters through.
+  def recipe_params
+    params.require(:recipe).permit(:title, :instructions, :prep_time, :cook_time, :is_private, :calories, tag_ids: [])
+  end
+
+  def process_ingredients_for(recipe)
+    ingredient_data = params.dig(:recipe, :recipe_ingredients_data) || []
+
+    recipe.recipe_ingredients.destroy_all
+
+    ingredient_data.each do |data|
+      next if data[:ingredient_id].blank?
+
+      RecipeIngredient.create!(
+        recipe: recipe,
+        ingredient_id: data[:ingredient_id],
+        amount: data[:amount],
+        unit: data[:unit]
+      )
     end
+  end
 end

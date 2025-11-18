@@ -36,6 +36,26 @@
     <%= form.check_box :is_private %>
   </div>
 
+  <h3>Ingredients</h3>
+  <div id="ingredients-fields">
+    <% recipe.recipe_ingredients.each do |ri| %>
+      <%= render 'recipe_ingredient_fields', recipe_ingredient: ri, all_ingredients: Ingredient.all %>
+    <% end %>
+
+    <% if recipe.new_record? && recipe.recipe_ingredients.empty? %>
+      <%= render 'recipe_ingredient_fields', recipe_ingredient: recipe.recipe_ingredients.build, all_ingredients: Ingredient.all %>
+    <% end %>
+  </div>
+
+  <button type="button" id="add-ingredient-button">Add ingredient</button>
+
+  <h3>Tags</h3>
+
+  <div>
+    <%= form.label :tag_ids, 'Tags', class: 'form-label' %>
+    <%= form.select :tag_ids, Tag.all.map { |t| [t.name, t.id] }, {include_blank: 'Select tag' }, { multiple: true, class: 'form-select' } %>
+  </div>
+
   <div>
     <%= form.label :calories, style: "display: block" %>
     <%= form.text_field :calories %>
@@ -45,3 +65,64 @@
     <%= form.submit %>
   </div>
 <% end %>
+
+<template id="ingredient-template">
+  <%= render 'recipe_ingredient_fields', recipe_ingredient: RecipeIngredient.new, all_ingredients: Ingredient.all %>
+</template>
+
+<!--  JavaScript pre pridávanie a odstraňovanie nových záznamov ingrediencií
+      prediskutovať, či nespraviť len cez fixný počet možných ingrediencií,
+      alebo iné riešenie? Pri každom kliknutí na add_ingredient by sa uložil recept
+      a pridal nový riadok pre novú ingredienciu, ale to sa mi vôbec nepáči. -->
+
+<script>
+document.addEventListener('turbo:load', () => {
+  const container = document.getElementById('ingredients-fields');
+  const addButton = document.getElementById('add-ingredient-button');
+  const template = document.getElementById('ingredient-template');
+
+  if (!addButton || !template) return; // Ukončí, ak nie je na stránke s formulárom
+
+  // Funkcia na pridanie riadku
+  addButton.addEventListener('click', () => {
+    // 1. Naklonuje obsah šablóny
+    const newFields = template.content.cloneNode(true);
+    
+    // 2. Vloží nové polia na koniec kontajnera
+    container.appendChild(newFields);
+  });
+
+  // Funkcia na odstránenie riadku (Delegovanie udalosti na kontajner)
+  // Nové: Po kliknutí na Remove označí riadok na zmazanie
+
+  container.addEventListener('click', (e) => {
+    if (e.target.classList.contains('remove-ingredient-button')) {
+      
+      // 1. Nájdeme kontajner pre jeden riadok ingrediencie
+      const ingredientFieldSet = e.target.closest('.ingredient-field-set');
+      if (!ingredientFieldSet) return;
+      
+      // 2. Nájdeme skryté pole pre zmazanie v rámci tohto riadku
+      // TIP: pridaj si k tomuto poľu triedu, aby sa ľahšie hľadalo (napr. class: 'destroy-field')
+      const destroyField = ingredientFieldSet.querySelector('input[type="hidden"][name$="[_destroy]"]');
+      
+      // 3. Ak je to existujúci záznam, označíme ho na zmazanie a skryjeme
+      if (destroyField) {
+        destroyField.value = '1'; // Nastaví _destroy na 1
+        ingredientFieldSet.style.display = 'none'; // Skryje vizuálne riadok
+        
+        // Bonus: Ak je to nový riadok, ktorý ešte nebol uložený (nemá ID), môžeme ho odstrániť.
+        const idField = ingredientFieldSet.querySelector('input[type="hidden"][name$="[id]"]');
+        if (!idField) {
+          // Ak nemá ID, je to nový, neuložený riadok – bezpečne ho odstránime úplne.
+          ingredientFieldSet.remove();
+        }
+        
+      } else {
+        // Alternatíva, ak pole _destroy nemáme (napr. pre nové polia v šablóne)
+        ingredientFieldSet.remove();
+      }
+    }
+  });
+});
+</script>

@@ -1,32 +1,52 @@
 <div id="<%= dom_id recipe %>">
-  <p>
-    <strong>Title:</strong>
-    <%= recipe.title %>
+
+  <h2 class="recipe-title"><%= recipe.title %></h2>
+
+  <p class=recipe-meta>
+    Prep time: <strong><%= recipe.prep_time %></strong> |
+    Cook time: <strong><%= recipe.cook_time %></strong> |
+    Private: <strong><%= recipe.is_private %></strong> |
+    Calories: <strong><%= recipe.calories %></strong>
   </p>
 
-  <p>
-    <strong>Instructions:</strong>
+  <hr>
+
+  <h3>Ingredients</h3>
+  <% if recipe.recipe_ingredients.any? %>
+    <ul class="ingredient-list">
+      <% recipe.recipe_ingredients.each do |ri| %>
+        <li>
+          <%= ri.amount %> <%= ri.unit %> <%= ri.ingredient.name %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No ingredients added so far.</p>
+  <% end %>
+
+  <hr>
+
+  <h3>Instructions:</h3>
+  <div class="instructions-body">
+    <%= simple_format(recipe.instructions) %>
+  </div>
+
+  <hr>
+
+  <h3>Instructions:</h3>
+  <div class="instructions-body">
     <%= recipe.instructions %>
-  </p>
+  </div>
 
-  <p>
-    <strong>Prep time:</strong>
-    <%= recipe.prep_time %>
-  </p>
+  <hr>
 
-  <p>
-    <strong>Cook time:</strong>
-    <%= recipe.cook_time %>
-  </p>
-
-  <p>
-    <strong>Is private:</strong>
-    <%= recipe.is_private %>
-  </p>
-
-  <p>
-    <strong>Calories:</strong>
-    <%= recipe.calories %>
-  </p>
-
-</div>
+  <h3>Tags</h3>
+  <% if recipe.tags.any? %>
+    <div class="recipe-tags">
+      <% recipe.tags.each do |tag| %>
+        <span class="tag tag-<%= tag.name.downcase.gsub(' ', '-') %>"><%= tag.name %></span>
+      <% end %>
+    </div>
+  <% else %>
+    <p>No tags added so far.</p>
+  <% end %>
