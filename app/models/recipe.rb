@@ -9,4 +9,7 @@ class Recipe < ApplicationRecord
   has_many :recipe_tags, dependent: :destroy
   has_many :tags, through: :recipe_tags
 
+  has_many :my_cookbooks, dependent: :destroy
+  has_many :users_who_saved, through: :my_cookbooks, source: :user
+
 end

@@ -9,7 +9,31 @@
     Calories: <strong><%= recipe.calories %></strong>
   </p>
 
-  <hr>
+  <% if user_signed_in? %>
+    <hr class="mt-4 mb-4">
+    <div class="user-actions flex items-center space-x-4">
+      <% if recipe.user == current_user %>
+        <%= link_to 'Edit', edit_recipe_path(recipe), class: 'bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-sm' %>
+        <%= button_to 'Delete', recipe_path(recipe), method: :delete, class: 'bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm' %>
+      <% end %>
+      <% if recipe.user != current_user || recipe.is_private == false %>
+        <% if current_user.saved_recipes.include?(recipe) %>
+          <%= button_to 'Remove from cookbook', 
+                        remove_from_cookbook_recipe_path(recipe), 
+                        method: :delete, 
+                        class: 'bg-gray-400 hover:bg-gray-500 text-white font-bold py-1 px-3 rounded text-sm' %>
+          <span class="text-green-600 text-sm">Uložené! ✔️</span>
+          
+        <% else %>
+          <%= button_to 'Save to my cookbook', 
+                        save_to_cookbook_recipe_path(recipe), 
+                        method: :post, 
+                        class: 'bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm' %>
+        
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
 
   <h3>Ingredients</h3>
   <% if recipe.recipe_ingredients.any? %>

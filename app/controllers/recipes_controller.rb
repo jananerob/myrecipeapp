@@ -1,10 +1,10 @@
 class RecipesController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :my_recipes, :cookbook, :save_to_cookbook, :remove_from_cookbook]
   before_action :set_recipe, only: [:show, :edit, :update, :destroy]
 
   # GET /recipes
   def index
-    @recipes = Recipe.where(is_public: true)
+    @recipes = Recipe.where(is_private: false)
     if user_signed_in? 
       @recipes = @recipes.or(Recipe.where(user: current_user))
     end
@@ -14,7 +14,23 @@ class RecipesController < ApplicationController
     @recipes = current_user.recipes
   end
 
+  def save_to_cookbook
+    current_user.my_cookbooks.create!(recipe: @recipe)
+
+    redirect_to @recipe, notice: "Recipe was successfully saved to your cookbook."
+
+  rescue ActiveRecord::RecordInvalid => e
+
+    redirect_to @recipe, alert: "Recipe has been already saved to your cookbook."
+  end
+
+  def remove_from_cookbook
+    current_user.my_cookbooks.find_by!(recipe: @recipe).destroy
+
+    redirect_to @recipe, notice: "Recipe was successfully removed from your cookbook."
+  end
   def cookbook
+    @recipes = current_user.saved_recipes
   end
   # GET /recipes/1
   def show
