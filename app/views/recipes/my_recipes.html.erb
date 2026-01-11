@@ -1,18 +1,22 @@
 <div class="container mx-auto p-4">
   <h1 class="text-3xl font-bold mb-6 text-gray-800">
     My recipes
-    <span class="text-sm font-normal text-gray-500">(Public and private)</span>
+    <span class="text-sm font-normal text-gray-500"></span>
   </h1>
 
   <div class="flex justify-end mb-4">
     <%= link_to 'Add new recipe', new_recipe_path, class: 'bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200' %>
   </div>
 
-  <div class="space-y-4">
+  <%# Tu používame CSS grid alebo flex, aby kartičky vyzerali v zozname dobre %>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <% if @recipes.any? %>
-      <%= render @recipes %>
+      <%# Renderujeme kolekciu pomocou nového parciálu recipe_card %>
+      <%= render partial: 'recipes/recipe_card', collection: @recipes, as: :recipe %>
     <% else %>
-      <p class="text-gray-500">No recipes created so far.</p>
+      <div class="col-span-full">
+        <p class="text-gray-500 text-center">No recipes created so far.</p>
+      </div>
     <% end %>
   </div>
 </div>

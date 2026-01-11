@@ -1,0 +1,28 @@
+<div class="recipe-card p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white h-full flex flex-col justify-between">
+  <div>
+    <h3 class="text-xl font-semibold text-gray-900 mb-2">
+      <%= link_to recipe.title, recipe %>
+    </h3>
+
+    <p class="text-gray-600 text-sm mb-2">
+      ⏱ <%= recipe.prep_time %> min | 🔥 <%= recipe.cook_time %> min | 🍽 <%= recipe.calories.presence || "-" %> kcal
+      <% if action_name == 'my_recipes' %>
+        | <%= recipe.is_private ? '🔒 Private' : '🌍 Public' %>
+      <% end %>
+    </p>
+
+    <% if recipe.tags.any? %>
+      <div class="flex flex-wrap gap-1 mb-4">
+        <% recipe.tags.each do |tag| %>
+          <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded border border-blue-100">
+            <%= tag.name %>
+          </span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-4 pt-3 border-t border-gray-100">
+    <%= link_to 'View Full Recipe', recipe_path(recipe), class: "text-blue-600 font-semibold hover:text-blue-800 transition-colors inline-flex items-center" %>
+  </div>
+</div>

@@ -11,5 +11,4 @@ class Recipe < ApplicationRecord
 
   has_many :my_cookbooks, dependent: :destroy
   has_many :users_who_saved, through: :my_cookbooks, source: :user
-
 end

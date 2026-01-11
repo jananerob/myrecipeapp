@@ -1,7 +1,7 @@
 class RecipesController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :my_recipes, :cookbook, :save_to_cookbook, :remove_from_cookbook]
-  before_action :set_recipe, only: [:show, :edit, :update, :destroy]
-
+  before_action :authenticate_user!, except: [:index, :show]
+  before_action :set_recipe, only: [:show, :edit, :update, :destroy, :save_to_cookbook, :remove_from_cookbook]
+  before_action :authorize_owner!, only: [:edit, :update, :destroy]
   # GET /recipes
   def index
     @recipes = Recipe.where(is_private: false)
@@ -19,9 +19,9 @@ class RecipesController < ApplicationController
 
     redirect_to @recipe, notice: "Recipe was successfully saved to your cookbook."
 
-  rescue ActiveRecord::RecordInvalid => e
+  rescue ActiveRecord::RecordInvalid
 
-    redirect_to @recipe, alert: "Recipe has been already saved to your cookbook."
+    redirect_to @recipe, alert: "Recipe has already been saved to your cookbook."
   end
 
   def remove_from_cookbook
@@ -80,6 +80,10 @@ class RecipesController < ApplicationController
   def set_recipe
     @recipe = Recipe.find(params[:id])
   end
+
+  def authorize_owner!
+    redirect_to recipes_path, alert: "You are not authorized to perform this action." unless @recipe.user_id == current_user.id 
+  end  
 
   # Only allow a list of trusted parameters through.
   def recipe_params

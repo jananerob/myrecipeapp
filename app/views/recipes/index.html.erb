@@ -1,14 +1,28 @@
-<h1>Recipes</h1>
+<div class="container mx-auto p-4 mb-24">
+  <h1 class="text-3xl font-bold mb-8 text-gray-800 text-center">Recipes</h1>
 
-<div id="recipes">
-  <% @recipes.each do |recipe| %>
-    <%= link_to recipe, class: 'text-black text-decoration-none' do %>
-      <%= render recipe %>
+  <%# Grid pre kartičky receptov %>
+  <div id="recipes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% if @recipes.any? %>
+      <% @recipes.each do |recipe| %>
+        <%= render 'recipes/recipe_card', recipe: recipe %>
+      <% end %>
+    <% else %>
+      <div class="col-span-full text-center py-10">
+        <p class="text-gray-500">No public recipes available yet.</p>
+      </div>
     <% end %>
-  <% end %>
+  </div>
 </div>
+
 <% if user_signed_in? %>
-  <div class='d-grid fixed-bottom p-4'>
-    <%= link_to "New recipe", new_recipe_path, class: 'btn btn-primary py-3 rounded-pill shadow fs-6 fw-bold' %>
+  <%# Fixné tlačidlo pre pridanie receptu na spodku obrazovky %>
+  <div class="fixed bottom-6 right-6 z-50">
+    <%= link_to new_recipe_path, class: 'flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-full shadow-2xl transition duration-200 transform hover:scale-105 active:scale-95' do %>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      <span>New recipe</span>
+    <% end %>
   </div>
 <% end %>

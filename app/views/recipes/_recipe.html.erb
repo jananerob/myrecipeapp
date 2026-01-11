@@ -1,65 +1,91 @@
-<div id="<%= dom_id recipe %>">
+<div id="<%= dom_id recipe %>" class="max-w-4xl mx-auto mb-12 bg-white border border-gray-200 shadow-sm rounded-2xl overflow-hidden font-sans">
 
-  <h2 class="recipe-title"><strong><%= recipe.title %></strong></h2>
-
-  <p class=recipe-meta>
-    Prep time: <strong><%= recipe.prep_time %></strong> |
-    Cook time: <strong><%= recipe.cook_time %></strong> |
-    Private: <strong><%= recipe.is_private %></strong> |
-    Calories: <strong><%= recipe.calories %></strong>
-  </p>
-
-  <% if user_signed_in? %>
-    <hr class="mt-4 mb-4">
-    <div class="user-actions flex items-center space-x-4">
-      <% if recipe.user == current_user %>
-        <%= link_to 'Edit', edit_recipe_path(recipe), class: 'bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-sm' %>
-        <%= button_to 'Delete', recipe_path(recipe), method: :delete, class: 'bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm' %>
-      <% end %>
-      <% if recipe.user != current_user || recipe.is_private == false %>
-        <% if current_user.saved_recipes.include?(recipe) %>
-          <%= button_to 'Remove from cookbook', 
-                        remove_from_cookbook_recipe_path(recipe), 
-                        method: :delete, 
-                        class: 'bg-gray-400 hover:bg-gray-500 text-white font-bold py-1 px-3 rounded text-sm' %>
-          <span class="text-green-600 text-sm">Uložené! ✔️</span>
-          
-        <% else %>
-          <%= button_to 'Save to my cookbook', 
-                        save_to_cookbook_recipe_path(recipe), 
-                        method: :post, 
-                        class: 'bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm' %>
-        
-        <% end %>
-      <% end %>
+  <%# Horná časť s titulkom %>
+  <div class="bg-gray-50/50 p-8 border-b border-gray-100 text-center">
+    <h2 class="text-3xl font-bold text-gray-900 mb-3 tracking-tight">
+      <%= recipe.title %>
+    </h2>
+    <div class="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
+      <span class="flex items-center">⏱ Prep time: <strong class="ml-1 text-gray-900"><%= recipe.prep_time %> min</strong></span>
+      <span class="flex items-center">🔥 Cook time: <strong class="ml-1 text-gray-900"><%= recipe.cook_time %> min</strong></span>
+      <span class="flex items-center">🔒 Private: <strong class="ml-1 text-gray-900"><%= recipe.is_private ? 'Yes' : 'No' %></strong></span>
+      <span class="flex items-center">🍽 Calories: <strong class="ml-1 text-gray-900"><%= recipe.calories.presence || "-" %> kcal</strong></span>
     </div>
-  <% end %>
-
-  <h3>Ingredients</h3>
-  <% if recipe.recipe_ingredients.any? %>
-    <ul class="ingredient-list">
-      <% recipe.recipe_ingredients.each do |ri| %>
-        <li>
-          <%= ri.amount %> <%= ri.unit %> <%= ri.ingredient.name %>
-        </li>
-      <% end %>
-    </ul>
-  <% else %>
-    <p>No ingredients added so far.</p>
-  <% end %>
-
-  <h3>Instructions:</h3>
-  <div class="instructions-body">
-    <%= simple_format(recipe.instructions) %>
   </div>
 
-  <h3>Tags</h3>
-  <% if recipe.tags.any? %>
-    <div class="recipe-tags">
-      <% recipe.tags.each do |tag| %>
-        <span class="tag"><%= tag.name %></span>
-      <% end %>
+  <div class="p-8">
+    <%# Používateľské akcie (Edit, Delete, Save) %>
+    <% if user_signed_in? %>
+      <div class="flex items-center justify-end space-x-4 mb-8 pb-4 border-b border-gray-100">
+        <% if recipe.user == current_user %>
+          <%= link_to 'Edit', edit_recipe_path(recipe), class: 'text-gray-500 hover:text-blue-600 text-xs font-bold uppercase tracking-wider transition' %>
+          <%= button_to 'Delete', recipe_path(recipe), method: :delete, class: 'text-red-400 hover:text-red-600 text-xs font-bold uppercase tracking-wider transition' %>
+        <% end %>
+
+        <div class="ml-4">
+          <% if recipe.user != current_user || recipe.is_private == false %>
+            <% if current_user.saved_recipes.include?(recipe) %>
+              <div div class="flex items-center space-x-3">
+                <div class="flex items-center bg-green-50 px-3 py-1.5 rounded-full border border-green-100">
+                  <span class="text-green-700 text-sm font-medium italic">Saved! ✔️</span>
+                </div>
+                <%= button_to 'Remove from cookbook', 
+                              remove_from_cookbook_recipe_path(recipe), 
+                              method: :delete, 
+                              class: 'bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs py-1.5 px-3 rounded-full border border-gray-200 transition duration-200' %>
+              </div>
+            <% else %>
+              <%= button_to 'Save to my cookbook', 
+                            save_to_cookbook_recipe_path(recipe), 
+                            method: :post, 
+                            class: 'bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-lg text-sm shadow-sm transition duration-200 transform hover:scale-105 active:scale-95' %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <%# Ingrediencie %>
+      <div class="md:col-span-1">
+        <h3 class="font-bold text-xl text-gray-800 mb-6 border-b-2 border-blue-500 inline-block">Ingredients</h3>
+        <% if recipe.recipe_ingredients.any? %>
+          <ul class="space-y-4 text-gray-700">
+            <% recipe.recipe_ingredients.each do |ri| %>
+              <li class="flex items-start border-b border-gray-50 pb-2">
+                <span class="font-bold text-blue-600 mr-2"><%= ri.amount %> <%= ri.unit %></span>
+                <span><%= ri.ingredient.name %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="italic text-gray-400 text-sm">No ingredients added so far.</p>
+        <% end %>
+      </div>
+
+      <%# Inštrukcie %>
+      <div class="md:col-span-2 border-l border-gray-100 pl-0 md:pl-10">
+        <h3 class="font-bold text-xl text-gray-800 mb-6 border-b-2 border-blue-500 inline-block">Instructions</h3>
+        <div class="prose prose-blue leading-relaxed text-gray-800 text-lg">
+          <%= simple_format(recipe.instructions) %>
+        </div>
+      </div>
     </div>
-  <% else %>
-    <p>No tags added so far.</p>
-  <% end %>
+
+    <%# Tagy naspodu %>
+    <div class="mt-12 pt-6 border-t border-gray-100">
+      <h3 class="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Tags</h3>
+      <div class="flex flex-wrap gap-2 justify-center">
+        <% if recipe.tags.any? %>
+          <% recipe.tags.each do |tag| %>
+            <span class="bg-blue-50 text-blue-700 text-xs px-3 py-1.5 rounded-md border border-blue-100 font-medium">
+              <%= tag.name %>
+            </span>
+          <% end %>
+        <% else %>
+          <p class="text-xs text-stone-400 italic">No tags added so far.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
