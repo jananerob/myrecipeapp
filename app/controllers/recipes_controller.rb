@@ -60,6 +60,11 @@ class RecipesController < ApplicationController
 
   # PATCH/PUT /recipes/1
   def update
+
+    if params[:recipe][:remove_image] == '1'
+      @recipe.image.purge
+    end
+
     if @recipe.update(recipe_params)
       process_ingredients_for(@recipe)
 
@@ -87,7 +92,7 @@ class RecipesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def recipe_params
-    params.require(:recipe).permit(:title, :instructions, :prep_time, :cook_time, :is_private, :calories, tag_ids: [])
+    params.require(:recipe).permit(:title, :instructions, :prep_time, :cook_time, :image, :remove_image, :is_private, :calories, tag_ids: [])
   end
 
   def process_ingredients_for(recipe)

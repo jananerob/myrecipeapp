@@ -1,9 +1,10 @@
-<%= form_with(model: recipe, class: "max-w-3xl mx-auto bg-white p-8 border rounded-xl shadow-sm space-y-6") do |form| %>
+<%= form_with(model: recipe, class: "max-w-3xl mx-auto bg-white p-8 border border-orange-100 rounded-2xl space-y-6") do |form| %>
 
   <% if recipe.errors.any? %>
-    <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
-      <h2 class="text-red-800 font-bold"><%= pluralize(recipe.errors.count, "error") %> prohibited this recipe from being saved:</h2>
-      <ul class="list-disc ml-5 text-red-700 text-sm">
+    <%# Chybové hlášky ladené do jemnej oranžovo-červenej %>
+    <div class="bg-orange-50 border-l-4 border-orange-500 p-4 mb-6 rounded-r-lg">
+      <h2 class="text-orange-900 font-bold"><%= pluralize(recipe.errors.count, "error") %> prohibited this recipe from being saved:</h2>
+      <ul class="list-disc ml-5 text-orange-800 text-sm">
         <% recipe.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -12,40 +13,45 @@
   <% end %>
 
   <%# Základné údaje %>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div class="md:col-span-2">
-      <%= form.label :title, class: "block text-sm font-semibold text-gray-700 mb-1" %>
-      <%= form.text_field :title, class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="md:col-span-3">
+      <%= form.label :title, class: "block text-sm font-medium text-orange-900 mb-1" %>
+      <%= form.text_field :title, class: "appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-orange-400 focus:border-orange-400 focus:z-10 sm:text-sm" %>
     </div>
 
-    <div class="md:col-span-2">
-      <%= form.label :instructions, class: "block text-sm font-semibold text-gray-700 mb-1" %>
-      <%= form.text_area :instructions, rows: 5, class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+    <div class="md:col-span-3">
+      <%= form.label :instructions, class: "block text-sm font-semibold text-orange-900 mb-1" %>
+      <%= form.text_area :instructions, rows: 5, class: "appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-orange-400 focus:border-orange-400 focus:z-10 sm:text-sm" %>
     </div>
 
-    <%# Časy v jednom riadku na desktopoch %>
-    <div class="grid grid-cols-2 gap-4 md:col-span-2">
-      <div>
-        <%= form.label :prep_time, "Prep Time (min)", class: "block text-sm font-semibold text-gray-700 mb-1" %>
-        <%= form.number_field :prep_time, class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
-      </div>
-      <div>
-        <%= form.label :cook_time, "Cook Time (min)", class: "block text-sm font-semibold text-gray-700 mb-1" %>
-        <%= form.number_field :cook_time, class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
-      </div>
+    <%# Časy v jednom riadku %>
+    <div>
+      <%= form.label :prep_time, "Prep Time (min)", class: "block text-sm font-semibold text-orange-900 mb-1" %>
+      <%= form.number_field :prep_time, class: "appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-orange-400 focus:border-orange-400 focus:z-10 sm:text-sm" %>
     </div>
-
-    <div class="md:col-span-2">
-      <%= form.label :calories, "Calories (kcal)", class: "block text-sm font-semibold text-gray-700 mb-1" %>
-      <%= form.text_field :calories, class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+    <div>
+      <%= form.label :cook_time, "Cook Time (min)", class: "block text-sm font-semibold text-orange-900 mb-1" %>
+      <%= form.number_field :cook_time, class: "appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-orange-400 focus:border-orange-400 focus:z-10 sm:text-sm" %>
+    </div>
+    <div>
+      <%= form.label :calories, "Calories (kcal)", class: "block text-sm font-semibold text-orange-900 mb-1" %>
+      <%= form.text_field :calories, class: "appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-orange-400 focus:border-orange-400 focus:z-10 sm:text-sm" %>
     </div>
   </div>
 
   <%# Ingrediencie %>
-  <div class="pt-6 border-t border-gray-100">
-    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-      <span class="mr-2">🍎</span> Ingredients
+  <div class="pt-6 border-t border-orange-50">
+    <h3 class="text-lg font-bold text-orange-900 mb-4 flex items-center">
+      <span class="mr-2 text-orange-400">🥕</span> Ingredients
     </h3>
+
+    <%# "Header" tabuľky s ingredienciami %>
+    <div class="grid grid-cols-12 gap-4 px-2 mb-2 border-b border-orange-100 pb-1">
+      <div class="col-span-6 text-xs font-bold text-orange-900 uppercase text-center">Ingredient</div>
+      <div class="col-span-2 text-xs font-bold text-orange-900 uppercase text-center">Amount</div>
+      <div class="col-span-2 text-xs font-bold text-orange-900 uppercase text-center">Unit</div>
+      <div class="col-span-2"></div>
+    </div>
 
     <div id="ingredients-fields" class="space-y-3">
       <% recipe.recipe_ingredients.each do |ri| %>
@@ -57,31 +63,55 @@
       <% end %>
     </div>
 
-    <button type="button" id="add-ingredient-button" class="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-      <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M10 3a1a1 0 011 1v5h5a1a1 0 110 2h-5v5a1a1 0 11-2 0v-5H4a1a1 0 110-2h5V4a1a1 0 011-1z" clip-rule="evenodd" />
+    <button type="button" id="add-ingredient-button" 
+        class="mt-4 flex items-center justify-center w-10 h-10 rounded-full border-0 text-sm font-semibold bg-orange-100 text-orange-700 hover:bg-orange-200 transition cursor-pointer focus:outline-none"
+        title="Add ingredient">
+      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
       </svg>
-      Add ingredient
     </button>
   </div>
 
   <%# Tagy a Súkromie %>
-  <div class="pt-6 border-t border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="pt-6 border-t border-orange-50 grid grid-cols-1 md:grid-cols-2 gap-6">
     <div>
-      <%= form.label :tag_ids, 'Tags', class: "block text-sm font-semibold text-gray-700 mb-1" %>
-      <%= form.select :tag_ids, Tag.all.map { |t| [t.name, t.id] }, { include_blank: 'Select tags' }, { multiple: true, class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 min-h-[100px]" } %>
+      <%= form.label :tag_ids, 'Tags', class: "block text-sm font-semibold text-orange-900 mb-1" %>
+      <%= form.select :tag_ids, Tag.all.map { |t| [t.name, t.id] }, { include_blank: 'Select tags' }, { multiple: true, class: "w-full rounded-lg border-orange-200 focus:border-orange-400 focus:ring focus:ring-orange-200 focus:ring-opacity-50 min-h-[100px]" } %>
     </div>
 
-    <div class="flex items-center space-x-3 bg-gray-50 p-4 rounded-lg self-start">
-      <%= form.check_box :is_private, class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %>
-      <%= form.label :is_private, "Private recipe (Only you will see this)", class: "text-sm font-medium text-gray-700" %>
+    <div class="flex items-center space-x-3 bg-orange-50 p-4 rounded-xl self-start border border-orange-100">
+      <%= form.check_box :is_private, class: "h-5 w-5 text-orange-500 focus:ring-orange-400 border-orange-300 rounded" %>
+      <%= form.label :is_private, "Private recipe (Only you will see this)", class: "text-sm font-medium text-orange-900" %>
     </div>
+  </div>
+
+  <%# Foto receptu %>
+  <div class="pt-6 border-t border-orange-50">
+    <%= form.label :image, "Recipe photo", class: "block text-orange-900 font-bold mb-2" %>
+
+    <% if @recipe.image.attached? && @recipe.image.persisted? %>
+      <div class="flex items-center space-x-4 mb-4 bg-orange-50 p-3 rounded-xl border border-orange-100">
+        <%= image_tag @recipe.image, class: "w-20 h-20 object-cover rounded-lg border-2 border-white" %>
+        <div class="flex items-center">
+          <%= form.check_box :remove_image, class: "w-4 h-4 text-red-500 border-orange-300 rounded focus:ring-red-400" %>
+          <%= form.label :remove_image, "Remove current photo", class: "ml-2 text-sm text-red-600 font-semibold" %>
+        </div>
+      </div>
+    <% end %>
+
+    <%= form.file_field :image, 
+      class: "block w-fit text-sm text-gray-500 
+              file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 
+              file:text-sm file:font-semibold file:bg-orange-100 file:text-orange-700 
+              hover:file:bg-orange-200 
+              file:transition file:duration-200 transition cursor-pointer" %>
   </div>
 
   <%# Submit tlačidlo %>
-  <div class="pt-6 border-t border-gray-200 flex justify-end">
-    <%= form.submit class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transform active:scale-95 transition-all duration-200 cursor-pointer" %>
+  <div class="pt-6 border-t border-orange-100 flex justify-end">
+    <%= form.submit class: "bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-bold py-3 px-10 rounded-xl transform active:scale-95 transition-all duration-200 cursor-pointer" %>
   </div>
+
 <% end %>
 
 <template id="ingredient-template">

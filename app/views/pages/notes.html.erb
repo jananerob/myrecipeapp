@@ -1,121 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detailed Notes and Issue Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom styles to refine the table appearance */
-        .styled-table {
-            border-collapse: collapse;
-        }
-        .styled-table th, .styled-table td {
-            border: 1px solid theme('colors.gray.200'); /* Use a subtle border */
-            padding: 1rem;
-        }
-        .styled-table thead th {
-            /* **OPRAVA:** Nahradená theme() funkciou priamymi hodnotami pre zabezpečenie viditeľnosti */
-            background-color: #3730a3; /* Ekvivalent indigo-700 */
-            color: white;
-            text-align: center;
-        }
-        .styled-table tbody tr:nth-child(even) {
-            /* Subtle zebra striping */
-            background-color: theme('colors.purple.50');
-        }
-        .placeholder {
-            color: theme('colors.gray.500'); /* Subtle grey for placeholder text */
-            font-style: italic;
-        }
+      /* Custom styles to refine the table appearance */
+      .styled-table {
+          border-collapse: collapse;
+      }
+      .styled-table th, .styled-table td {
+          border: 1px solid theme('colors.gray.200'); /* Use a subtle border */
+          padding: 1rem;
+      }
+      .styled-table thead th {
+          /* **OPRAVA:** Nahradená theme() funkciou priamymi hodnotami pre zabezpečenie viditeľnosti */
+          background-color: #3730a3; /* Ekvivalent indigo-700 */
+          color: white;
+          text-align: center;
+      }
+      .styled-table tbody tr:nth-child(even) {
+          /* Subtle zebra striping */
+          background-color: theme('colors.purple.50');
+      }
+      .placeholder {
+          color: theme('colors.gray.500'); /* Subtle grey for placeholder text */
+          font-style: italic;
+      }
     </style>
-</head>
-<body class="bg-purple-50 text-gray-800 p-4 sm:p-8">
+  </head>
+  <body class="bg-purple-50 text-gray-800 p-4 sm:p-8">
 
     <div class="max-w-6xl mx-auto bg-white shadow-xl rounded-lg p-6 sm:p-10 border border-purple-200">
 
-        <h1 class="text-4xl font-extrabold text-indigo-700 border-b-4 border-orange-400 pb-3 mb-6 flex items-center">
-            <span class="mr-3">📝</span> Detailed Tracker for Issues, Notes, and Usage
-        </h1>
-        
-        <p class="text-lg mb-8 text-gray-600">
-            A comprehensive table structure for tracking issues, code snippets, notes, and the context of their usage within the project (e.g., Recipe Management).
-        </p>
+      <h1 class="text-4xl font-extrabold text-indigo-700 border-b-4 border-orange-400 pb-3 mb-6 flex items-center">
+        <span class="mr-3">📝</span> Detailed Tracker for Issues, Notes, and Usage
+      </h1>
 
-        <table class="styled-table w-full text-left text-lg shadow-lg">
-            <thead>
-                <tr>
-                    <th class="w-12 text-center">#</th>
-                    <th class="w-1/5">Issue</th>
-                    <th class="w-1/2">Note</th>
-                    <th class="w-1/4">Usage Context</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="hover:bg-purple-100 transition duration-150">
-                    <td class="text-center font-bold">1</td>
-                    <td class="placeholder">Authentication Error (Devise)</td>
-                    <td class="placeholder">Solution for 'Can't verify authenticity token' in Rails API-only configuration.</td>
-                    <td class="placeholder">User Auth (Devise setup)</td>
-                </tr>
-                <tr class="hover:bg-purple-100 transition duration-150">
-                    <td class="text-center font-bold">2</td>
-                    <td class="placeholder">Image Generation Timeout</td>
-                    <td class="placeholder">Increased timeout limit for the external AI image generation request to 30 seconds.</td>
-                    <td class="placeholder">AI Feature (Image Generator)</td>
-                </tr>
-                <tr class="hover:bg-purple-100 transition duration-150">
-                    <td class="text-center font-bold">3</td>
-                    <td class="placeholder">Recipe Filtering Logic</td>
-                    <td class="placeholder">SQL query syntax for filtering recipes by multiple Tags (using a join table).</td>
-                    <td class="placeholder">Recipe Management (Tag Filtering)</td>
-                </tr>
-                <tr class="hover:bg-purple-100 transition duration-150">
-                    <td class="text-center font-bold">4</td>
-                    <td class="placeholder">Missing Tag Index</td>
-                    <td class="placeholder">Need to add a database index to the `name` column of the `tags` table for faster lookups.</td>
-                    <td class="placeholder">Models (Tag optimization)</td>
-                </tr>
-                <tr class="hover:bg-purple-100 transition duration-150">
-                    <td class="text-center font-bold">5</td>
-                    <td class="placeholder">Comparison vs Numericality</td>
-                    <td class="placeholder">
-                        - comparison: { greater_than: 0 }: Zabezpečí, že hodnota je väčšia ako nula. To je správne. <br>
-                        - numericality: true: Zabezpečí, že hodnota je číslo (float alebo integer). <br>
-                        - Aby ste zabránili používateľovi zadať text (čo by pri amount:float spôsobilo chybu), <br>
-                        mali by ste použiť obidve validácie, alebo ideálne použiť rozšírenú verziu numericality, <br>
-                        ktorá už v sebe zahŕňa kontrolu, či je to číslo.
-</td>
-                    <td class="placeholder">Models (Tag optimization)</td>
-                </tr>
-                <tr class="hover:bg-purple-100 transition duration-150">
-                    <td class="text-center font-bold">6</td>
-                    <td class="placeholder">find_or_create_by!</td>
-                    <td class="placeholder">Používame Ingredient.find_or_create_by!(name: ingredient_name), aby sme zabránili duplicitám, ak by sa seeds spúšťali viackrát.</td>
-                    <td class="placeholder">seed.rb</td>
-                </tr>
-                <tr class="hover:bg-purple-100 transition duration-150">
-                    <td class="text-center font-bold">6</td>
-                    <td class="placeholder">find_or_create_by!</td>
-                    <td class="placeholder">xxxxxxxx</td>
-                    <td class="placeholder">seed.rb</td>
-                </tr>
-                <tr class="hover:bg-purple-100 transition duration-150">
-                    <td class="text-center font-bold">6</td>
-                    <td class="placeholder">find_or_create_by!</td>
-                    <td class="placeholder">xxxxxxxx</td>
-                    <td class="placeholder">seed.rb</td>
-                </tr>
-                <tr class="hover:bg-purple-100 transition duration-150">
-                    <td class="text-center font-bold">6</td>
-                    <td class="placeholder">find_or_create_by!</td>
-                    <td class="placeholder">xxxxxxxx</td>
-                    <td class="placeholder">seed.rb</td>
-                </tr>
-                </tbody>
-        </table>
+      <p class="text-lg mb-8 text-gray-600">
+        A comprehensive table structure for tracking issues, code snippets, notes, and the context of their usage within the project (e.g., Recipe Management).
+      </p>
+
+      <table class="styled-table w-full text-left text-lg shadow-lg">
+        <thead>
+          <tr>
+            <th class="w-12 text-center">#</th>
+            <th class="w-1/5">Issue</th>
+            <th class="w-1/2">Note</th>
+            <th class="w-1/4">Usage Context</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="hover:bg-purple-100 transition duration-150">
+            <td class="text-center font-bold">1</td>
+            <td class="placeholder">Authentication Error (Devise)</td>
+            <td class="placeholder">Solution for 'Can't verify authenticity token' in Rails API-only configuration.</td>
+            <td class="placeholder">User Auth (Devise setup)</td>
+          </tr>
+          <tr class="hover:bg-purple-100 transition duration-150">
+            <td class="text-center font-bold">2</td>
+            <td class="placeholder">Image Generation Timeout</td>
+            <td class="placeholder">Increased timeout limit for the external AI image generation request to 30 seconds.</td>
+            <td class="placeholder">AI Feature (Image Generator)</td>
+          </tr>
+          <tr class="hover:bg-purple-100 transition duration-150">
+            <td class="text-center font-bold">3</td>
+            <td class="placeholder">Recipe Filtering Logic</td>
+            <td class="placeholder">SQL query syntax for filtering recipes by multiple Tags (using a join table).</td>
+            <td class="placeholder">Recipe Management (Tag Filtering)</td>
+          </tr>
+          <tr class="hover:bg-purple-100 transition duration-150">
+            <td class="text-center font-bold">4</td>
+            <td class="placeholder">Missing Tag Index</td>
+            <td class="placeholder">Need to add a database index to the `name` column of the `tags` table for faster lookups.</td>
+            <td class="placeholder">Models (Tag optimization)</td>
+          </tr>
+          <tr class="hover:bg-purple-100 transition duration-150">
+            <td class="text-center font-bold">5</td>
+            <td class="placeholder">Comparison vs Numericality</td>
+            <td class="placeholder">
+              - comparison: { greater_than: 0 }: Zabezpečí, že hodnota je väčšia ako nula. To je správne. <br>
+              - numericality: true: Zabezpečí, že hodnota je číslo (float alebo integer). <br>
+              - Aby ste zabránili používateľovi zadať text (čo by pri amount:float spôsobilo chybu), <br>
+              mali by ste použiť obidve validácie, alebo ideálne použiť rozšírenú verziu numericality, <br>
+              ktorá už v sebe zahŕňa kontrolu, či je to číslo.
+            </td>
+            <td class="placeholder">Models (Tag optimization)</td>
+          </tr>
+          <tr class="hover:bg-purple-100 transition duration-150">
+            <td class="text-center font-bold">6</td>
+            <td class="placeholder">find_or_create_by!</td>
+            <td class="placeholder">Používame Ingredient.find_or_create_by!(name: ingredient_name), aby sme zabránili duplicitám, ak by sa seeds spúšťali viackrát.</td>
+            <td class="placeholder">seed.rb</td>
+          </tr>
+          <tr class="hover:bg-purple-100 transition duration-150">
+            <td class="text-center font-bold">6</td>
+            <td class="placeholder">find_or_create_by!</td>
+            <td class="placeholder">xxxxxxxx</td>
+            <td class="placeholder">seed.rb</td>
+          </tr>
+          <tr class="hover:bg-purple-100 transition duration-150">
+            <td class="text-center font-bold">6</td>
+            <td class="placeholder">find_or_create_by!</td>
+            <td class="placeholder">xxxxxxxx</td>
+            <td class="placeholder">seed.rb</td>
+          </tr>
+          <tr class="hover:bg-purple-100 transition duration-150">
+            <td class="text-center font-bold">6</td>
+            <td class="placeholder">find_or_create_by!</td>
+            <td class="placeholder">xxxxxxxx</td>
+            <td class="placeholder">seed.rb</td>
+          </tr>
+        </tbody>
+      </table>
 
     </div>
 
-</body>
+    <div class="max-w-4xl mx-auto my-10 p-8 bg-white border border-gray-200 shadow-md rounded-xl font-sans">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-orange-500 inline-block">Rails Helper: image_tag</h2>
+
+      <section class="mb-8">
+        <h3 class="text-xl font-semibold text-gray-700 mb-3">Ako image_tag funguje?</h3>
+        <p class="text-gray-600 mb-4">
+          <code>image_tag</code> je Rails helper, ktorý generuje HTML <code>&lt;img&gt;</code> element.
+        </p>
+
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+          <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">ERB Kód (v tvojom súbore)</p>
+          <pre class="text-orange-600 font-mono text-sm"><code>&lt;%= image_tag "logo.png", class: "h-10" %&gt;</code></pre>
+        </div>
+
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Vygenerované HTML (v prehliadači)</p>
+          <pre class="text-gray-700 font-mono text-sm"><code>&lt;img src="/assets/logo-8329...png" class="h-10" /&gt;</code></pre>
+        </div>
+      </section>
+
+      <hr class="my-8 border-gray-100">
+
+      <section>
+        <h3 class="text-xl font-semibold text-gray-700 mb-4">Prečo ho používame v projekte Recipes?</h3>
+        <p class="text-gray-600 mb-6 italic text-sm">
+          V recepte používame: <code>&lt;%= image_tag recipe.image, class: "w-full h-48 object-cover" %&gt;</code>
+        </p>
+
+        <ul class="space-y-4">
+          <li class="flex items-start">
+            <span class="text-orange-500 mr-2">✔</span>
+            <div>
+              <strong class="text-gray-800">Spolupráca s Active Storage:</strong>
+              <p class="text-gray-600 text-sm">Rails vie, že <code>recipe.image</code> je objekt v databáze a automaticky zistí jeho správnu URL adresu.</p>
+            </div>
+          </li>
+          <li class="flex items-start">
+            <span class="text-orange-500 mr-2">✔</span>
+            <div>
+              <strong class="text-gray-800">Bezpečnosť a Fingerprinting:</strong>
+              <p class="text-gray-600 text-sm">Rails pridáva k názvom obrázkov unikátne kódy (odtlačky). Ak fotku zmeníš, prehliadač to vďaka zmenenému názvu hneď rozpozná a nenačíta starú verziu z pamäte.</p>
+            </div>
+          </li>
+          <li class="flex items-start">
+            <span class="text-orange-500 mr-2">✔</span>
+            <div>
+              <strong class="text-gray-800">Jednoduchý Tailwind styling:</strong>
+              <p class="text-gray-600 text-sm">Triedy píšeme ako Ruby hash, čo je v <code>.erb</code> súboroch omnoho prehľadnejšie a lepšie sa to číta.</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+    </div>
+
+  </body>
 </html>

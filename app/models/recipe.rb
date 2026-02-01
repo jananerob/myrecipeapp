@@ -1,4 +1,8 @@
 class Recipe < ApplicationRecord
+  has_one_attached :image
+
+  attr_accessor :remove_image
+
   belongs_to :user
   validates :title, :instructions, :prep_time, :cook_time, presence: true
   validates :prep_time, :cook_time, numericality: { greater_than: 0 }
