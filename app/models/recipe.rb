@@ -1,5 +1,5 @@
 class Recipe < ApplicationRecord
-  has_one_attached :image
+  has_one_attached :image, dependent: :purge_later
 
   attr_accessor :remove_image
 
@@ -15,4 +15,5 @@ class Recipe < ApplicationRecord
 
   has_many :my_cookbooks, dependent: :destroy
   has_many :users_who_saved, through: :my_cookbooks, source: :user
+  
 end

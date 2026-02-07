@@ -1,3 +1,5 @@
+# toto zatiaľ nikde nepoužívam 
+
 module ApplicationHelper
   def active_path(path)
     'active' if request.path == path

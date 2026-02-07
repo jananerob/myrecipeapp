@@ -2,6 +2,7 @@ class RecipesController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
   before_action :set_recipe, only: [:show, :edit, :update, :destroy, :save_to_cookbook, :remove_from_cookbook]
   before_action :authorize_owner!, only: [:edit, :update, :destroy]
+  
   # GET /recipes
   def index
     @recipes = Recipe.where(is_private: false)
@@ -47,31 +48,55 @@ class RecipesController < ApplicationController
 
   # POST /recipes
   def create
-    @recipe = current_user.recipes.build(recipe_params)
+    ingredient_data = params.dig(:recipe, :recipe_ingredients_data) || []
 
-    if @recipe.save
+    Recipe.transaction do 
+      @recipe = current_user.recipes.build(recipe_params)
+      @recipe.save!
       process_ingredients_for(@recipe)
-
       redirect_to @recipe, notice: "Recipe was successfully created."
-    else
-      render :new, status: :unprocessable_entity
     end
+
+  rescue ActiveRecord::RecordInvalid => e
+    @recipe.recipe_ingredients.target.clear
+
+    ingredient_data.each do |data|
+      @recipe.recipe_ingredients.build(data.permit(:ingredient_id, :amount, :unit))
+    end
+    
+    if e.record.is_a?(RecipeIngredient)
+      @recipe.errors.add(:base, "Ingredient error: #{e.record.errors.full_messages.to_sentence}")
+    end
+    
+    render :new, status: :unprocessable_entity
   end
 
   # PATCH/PUT /recipes/1
   def update
+    ingredient_data = params.dig(:recipe, :recipe_ingredients_data) || []
 
-    if params[:recipe][:remove_image] == '1'
-      @recipe.image.purge
+    Recipe.transaction do
+      @recipe.update!(recipe_params)
+        process_ingredients_for(@recipe)
+
+        @recipe.image.purge if params[:recipe][:remove_image] == '1'
+        
+        redirect_to @recipe, notice: "Recipe was successfully updated.", status: :see_other
+      end
+
+  rescue ActiveRecord::RecordInvalid => e
+
+    @recipe.recipe_ingredients.target.clear
+
+    ingredient_data.each do |data|
+      @recipe.recipe_ingredients.build(data.permit(:ingredient_id, :amount, :unit))
     end
 
-    if @recipe.update(recipe_params)
-      process_ingredients_for(@recipe)
-
-      redirect_to @recipe, notice: "Recipe was successfully updated.", status: :see_other
-    else
-      render :edit, status: :unprocessable_entity
+    if e.record.is_a?(RecipeIngredient)
+      @recipe.errors.add(:base, "Ingredient error: #{e.record.errors.full_messages.to_sentence}")
     end
+
+    render :edit, status: :unprocessable_entity    
   end
 
   # DELETE /recipes/1
@@ -87,7 +112,7 @@ class RecipesController < ApplicationController
   end
 
   def authorize_owner!
-    redirect_to recipes_path, alert: "You are not authorized to perform this action." unless @recipe.user_id == current_user.id 
+    redirect_to recipes_path, alert: "You are not authorized to perform this action." unless @recipe.user == current_user 
   end  
 
   # Only allow a list of trusted parameters through.
@@ -112,3 +137,6 @@ class RecipesController < ApplicationController
     end
   end
 end
+
+# git commmit -m 'JavaScript fix, JS duplikácia, Transaction + Rescue, UX'
+

@@ -118,59 +118,94 @@
   <%= render 'recipe_ingredient_fields', recipe_ingredient: RecipeIngredient.new, all_ingredients: Ingredient.all %>
 </template>
 
-<!--  JavaScript pre pridávanie a odstraňovanie nových záznamov ingrediencií
-      prediskutovať, či nespraviť len cez fixný počet možných ingrediencií,
-      alebo iné riešenie? Pri každom kliknutí na add_ingredient by sa uložil recept
-      a pridal nový riadok pre novú ingredienciu, ale to sa mi vôbec nepáči. -->
-
 <script>
-  document.addEventListener('turbo:load', () => {
-    const container = document.getElementById('ingredients-fields');
-    const addButton = document.getElementById('add-ingredient-button');
-    const template = document.getElementById('ingredient-template');
+  /**
+   * 1. OCHRANNÁ POISTKA (Idempotencia)
+   * Turbo v Rails 7 pri chybách validácie (render :edit) znovu spustí tento <script>.
+   * Bez tejto podmienky by sme pri každej chybe pridali ďalší a ďalší 'listener'.
+   * window.ingredientsInitialized je globálna premenná, ktorá prežije aj prekreslenie obsahu stránky.
+   */
+  if (typeof window.ingredientsInitialized === 'undefined') {
 
-    if (!addButton || !template) return; // Ukončí, ak nie je na stránke s formulárom
+    /**
+     * 2. DEFINÍCIA FUNKCIE PRE NOVÝ RIADOK
+     * Túto funkciu voláme vždy, keď Jakub klikne na tlačidlo plus (+).
+     */
+    const addIngredientRow = () => {
+      // Nájdeme miesto, kam sa majú riadky vkladať
+      const container = document.getElementById('ingredients-fields');
+      // Nájdeme skrytú HTML šablónu (template), v ktorej je prázdny riadok ingrediencie
+      const template = document.getElementById('ingredient-template');
 
-    // Funkcia na pridanie riadku
-    addButton.addEventListener('click', () => {
-      // 1. Naklonuje obsah šablóny
+      // Ak by sme náhodou neboli na stránke s receptom, funkcia sa ukončí (prevencia errorov)
+      if (!container || !template) return;
+
+      // Naklonujeme obsah šablóny. 'true' znamená, že chceme skopírovať všetko vnútri (inputy, divy).
       const newFields = template.content.cloneNode(true);
 
-      // 2. Vloží nové polia na koniec kontajnera
+      // Vložíme tento nový kus HTML na koniec nášho kontajnera
       container.appendChild(newFields);
-    });
+    };
 
-    // Funkcia na odstránenie riadku (Delegovanie udalosti na kontajner)
-    // Nové: Po kliknutí na Remove označí riadok na zmazanie
+    /**
+     * 3. DELEGOVANIE UDALOSTI NA ÚROVNI DOKUMENTU
+     * Namiesto toho, aby sme dávali pozor priamo na tlačidlo, dávame pozor na celý 'document'.
+     * Je to lepšie, lebo dokument sa nemení, zatiaľ čo formulár sa pri chybách stále prepisuje.
+     */
+    document.addEventListener('click', (e) => {
 
-    container.addEventListener('click', (e) => {
+      /**
+       * A) LOGIKA PRE PRIDÁVANIE (+)
+       * e.target je element, na ktorý sa reálne kliklo.
+       * closest('#add-ingredient-button') zistí, či sme klikli na tlačidlo alebo na niečo v ňom (napr. ikonu).
+       */
+      if (e.target.closest('#add-ingredient-button')) {
+        // Zabránime prehliadaču, aby skúsil odoslať formulár alebo obnoviť stránku
+        e.preventDefault();
+        // Zavoláme našu funkciu na pridanie riadku
+        addIngredientRow();
+      }
+
+      /**
+       * B) LOGIKA PRE ODSTRÁNENIE (Remove)
+       * Tu kontrolujeme, či kliknutý element má CSS triedu pre odstraňovanie.
+       */
       if (e.target.classList.contains('remove-ingredient-button')) {
+        // Opäť zastavíme predvolené správanie
+        e.preventDefault();
 
-        // 1. Nájdeme kontajner pre jeden riadok ingrediencie
+        // Nájdeme celý blok ingrediencie (fieldset), v ktorom sa nachádza stlačené tlačidlo
         const ingredientFieldSet = e.target.closest('.ingredient-field-set');
-        if (!ingredientFieldSet) return;
 
-        // 2. Nájdeme skryté pole pre zmazanie v rámci tohto riadku
-        // TIP: pridaj si k tomuto poľu triedu, aby sa ľahšie hľadalo (napr. class: 'destroy-field')
-        const destroyField = ingredientFieldSet.querySelector('input[type="hidden"][name$="[_destroy]"]');
-
-        // 3. Ak je to existujúci záznam, označíme ho na zmazanie a skryjeme
-        if (destroyField) {
-          destroyField.value = '1'; // Nastaví _destroy na 1
-          ingredientFieldSet.style.display = 'none'; // Skryje vizuálne riadok
-
-          // Bonus: Ak je to nový riadok, ktorý ešte nebol uložený (nemá ID), môžeme ho odstrániť.
+        if (ingredientFieldSet) {
+          // Skontrolujeme, či má tento riadok skryté pole pre ID (znamená to, že už je v databáze)
           const idField = ingredientFieldSet.querySelector('input[type="hidden"][name$="[id]"]');
-          if (!idField) {
-            // Ak nemá ID, je to nový, neuložený riadok – bezpečne ho odstránime úplne.
-            ingredientFieldSet.remove();
-          }
 
-        } else {
-          // Alternatíva, ak pole _destroy nemáme (napr. pre nové polia v šablóne)
-          ingredientFieldSet.remove();
+          if (!idField) {
+            // Ak ID neexistuje, je to nový riadok, ktorý Jakub práve pridal.
+            // Jednoducho ho odstránime z HTML a hotovo.
+            ingredientFieldSet.remove();
+          } else {
+            // Ak ID existuje, musíme o zmazaní povedať Railsu cez pole '_destroy'.
+            const destroyField = ingredientFieldSet.querySelector('input[type="hidden"][name$="[_destroy]"]');
+            if (destroyField) {
+              // Nastavíme hodnotu na 1. Keď Jakub odošle formulár, Rails tento záznam v DB zmaže.
+              destroyField.value = '1';
+              // Riadok v HTML nesmieme úplne zmazať (remove), lebo by sa neodoslalo to pole _destroy.
+              // Preto ho len vizuálne skryjeme.
+              ingredientFieldSet.style.display = 'none';
+            }
+          }
         }
       }
     });
-  });
+
+    /**
+     * 4. ZÁMOK (Zabránenie duplicite)
+     * Nastavíme premennú na true. Pri ďalšom spustení skriptu (po chybe validácie)
+     * už podmienka 'if' na začiatku neprejde a nepridá sa druhý listener.
+     */
+    window.ingredientsInitialized = true;
+    console.log("Ingrediencie: Inicializácia úspešná.");
+  }
 </script>
