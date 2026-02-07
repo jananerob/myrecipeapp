@@ -299,50 +299,23 @@ puts "--------------------------------------"
 puts "Insertion of Tag data..."
 puts "--------------------------------------"
 
-
+# Najprv vyčistíme prepojenia, aby sme nenechali "siroty" v databáze
+puts "Čistím staré dáta..."
+RecipeTag.destroy_all
 Tag.destroy_all
-puts "Tag database cleared."
+puts "Databáza tagov vymazaná."
 
+# Nový, zúžený výber
 tags_list = [
-  # Meal Type/Time of Day
-  "Breakfast", "Brunch", "Lunch", "Dinner", "Snack", "Appetizer", "Side Dish", 
-  "Dessert", "Beverage", "Cocktail",
-
-  # Cuisine/Origin
-  "Italian", "Mexican", "Asian", "Indian", "French", "Mediterranean", "American", 
-  "Thai", "Japanese", "Chinese", "Greek", "Spanish", "Middle Eastern", "Vietnamese", 
-  "Ethiopian", "German", "BBQ",
-
-  # Dietary/Health
-  "Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Low-Carb", "Keto", "Paleo", 
-  "Whole30", "Nut-Free", "Soy-Free", "Sugar-Free", "High-Protein", "Low-Calorie", 
-  "Healthy",
-
-  # Dish Type/Category
-  "Soup", "Salad", "Stew", "Casserole", "Stir-Fry", "Pasta", "Pizza", "Sandwich", 
-  "Burger", "Tacos", "Cake", "Cookies", "Bread", "Pie", "Roast", "Grill", "Skewers", 
-  "Baking", "Muffin", "Pancake",
-
-  # Prep & Cook Time
-  "15-Minute Meal", "30-Minute Meal", "Quick", "Fast", "Make-Ahead", "Freezer-Friendly", 
-  "Batch Cooking",
-
-  # Technique/Method
-  "Bake", "Grill", "Roast", "Fry", "Sauté", "Steam", "Slow Cooker", "Instant Pot", 
-  "Air Fryer", "No-Bake", "One-Pot", "One-Pan",
-
-  # Occasion/Season
-  "Holiday", "Christmas", "Thanksgiving", "Easter", "Summer", "Winter", "Game Day", 
-  "Weeknight Dinner", "Date Night", "Picnic", "Party", "Seasonal",
-
-  # Audience/Effort Level
-  "Kid-Friendly", "Beginner", "Expert", "Budget-Friendly", "Crowd-Pleaser", "Entertaining"
+  "Breakfast", "Brunch", "Lunch", "Dinner", "Snack", "Side Dish", 
+  "Dessert", "Beverage", "Vegan", "Vegetarian", "Gluten-Free",
+  "Dairy-Free", "Low-Carb", "High-Protein", "Low-Calorie", "Soup", "Salad"
 ]
 
+puts "Nahrávam nové tagy..."
 tags_list.each do |tag_name|
-  Tag.find_or_create_by!(name: tag_name)
+  Tag.create!(name: tag_name)
 end
 
-puts "✅ Inserted #{Tag.count} tags."
+puts "✅ Úspešne vložených #{Tag.count} tagov."
 puts "--------------------------------------"
-puts "Seed data uploaded successfully!"

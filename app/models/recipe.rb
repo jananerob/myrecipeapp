@@ -30,6 +30,14 @@ class Recipe < ApplicationRecord
      )       
     end
 
+    if self.image.attached?
+      new_recipe.image.attach(
+        io: StringIO.new(self.image.download),
+        filename: self.image.filename,
+        content_type: self.image.content_type
+        )
+    end
+
     new_recipe
   end
 

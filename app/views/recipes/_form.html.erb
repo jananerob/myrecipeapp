@@ -55,11 +55,11 @@
 
     <div id="ingredients-fields" class="space-y-3">
       <% recipe.recipe_ingredients.each do |ri| %>
-        <%= render 'recipe_ingredient_fields', recipe_ingredient: ri, all_ingredients: Ingredient.all %>
+        <%= render 'recipe_ingredient_fields', recipe_ingredient: ri, all_ingredients: Ingredient.order(:name) %>
       <% end %>
 
       <% if recipe.new_record? && recipe.recipe_ingredients.empty? %>
-        <%= render 'recipe_ingredient_fields', recipe_ingredient: recipe.recipe_ingredients.build, all_ingredients: Ingredient.all %>
+        <%= render 'recipe_ingredient_fields', recipe_ingredient: recipe.recipe_ingredients.build, all_ingredients: Ingredient.order(:name) %>
       <% end %>
     </div>
 
@@ -76,7 +76,7 @@
   <div class="pt-6 border-t border-orange-50 grid grid-cols-1 md:grid-cols-2 gap-6">
     <div>
       <%= form.label :tag_ids, 'Tags', class: "block text-sm font-semibold text-orange-900 mb-1" %>
-      <%= form.select :tag_ids, Tag.all.map { |t| [t.name, t.id] }, { include_blank: 'Select tags' }, { multiple: true, class: "w-full rounded-lg border-orange-200 focus:border-orange-400 focus:ring focus:ring-orange-200 focus:ring-opacity-50 min-h-[100px]" } %>
+      <%= form.select :tag_ids, Tag.order(:name).map { |t| [t.name, t.id] }, { include_blank: 'Select tags' }, { multiple: true, class: "w-full rounded-lg border-orange-200 focus:border-orange-400 focus:ring focus:ring-orange-200 focus:ring-opacity-50 min-h-[100px]" } %>
     </div>
 
     <div class="flex items-center space-x-3 bg-orange-50 p-4 rounded-xl self-start border border-orange-100">
@@ -115,7 +115,7 @@
 <% end %>
 
 <template id="ingredient-template">
-  <%= render 'recipe_ingredient_fields', recipe_ingredient: RecipeIngredient.new, all_ingredients: Ingredient.all %>
+  <%= render 'recipe_ingredient_fields', recipe_ingredient: RecipeIngredient.new, all_ingredients: Ingredient.order(:name) %>
 </template>
 
 <script>

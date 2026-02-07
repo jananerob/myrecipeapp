@@ -9,6 +9,21 @@ class RecipesController < ApplicationController
     if user_signed_in? 
       @recipes = @recipes.or(Recipe.where(user: current_user, parent_id: nil))
     end
+
+    if params[:tag_ids].present?
+
+      selected_ids = params[:tag_ids].compact_blank
+      
+      if selected_ids.any?
+        tag_count = selected_ids.size
+
+        @recipes = @recipes.joins(:tags)
+                          .where(tags: {id: selected_ids})
+                          .group('recipes.id')
+                          .having('COUNT(tags.id) = ?', tag_count)
+       end
+
+    end
   end
 
   def my_recipes
