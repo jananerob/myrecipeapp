@@ -38,15 +38,15 @@
         <% end %>
 
         <div class="ml-4">
-          <% if recipe.user != current_user || recipe.is_private == false %>
-            <% if current_user.saved_recipes.include?(recipe) %>
+          <% if recipe.user != current_user %>
+            <% user_copy = current_user.recipes.find_by(parent_id: recipe.id) %>
+            <% if user_copy %>
               <div div class="flex items-center space-x-3">
-                <div>
-                  <span class="bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 px-6 rounded-lg text-sm shadow-sm transition duration-200 transform hover:scale-105 active:scale-95">Saved! ✔️</span>
-                </div>
+                <span class="bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 px-6 rounded-lg text-sm shadow-sm transition duration-200 transform hover:scale-105 active:scale-95">Saved! ✔️</span>
                 <%= button_to 'Remove from my cookbook', 
-                              remove_from_cookbook_recipe_path(recipe), 
+                              recipe_path(user_copy), 
                               method: :delete, 
+                              data: {confirm: "Are you sure?"},
                               class: 'bg-gray-100 hover:bg-gray-200 text-black font-bold py-2.5 px-6 rounded-lg text-sm shadow-sm transition duration-200 transform hover:scale-105 active:scale-95' %>
               </div>
             <% else %>

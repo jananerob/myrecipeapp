@@ -3,7 +3,6 @@ Rails.application.routes.draw do
   resources :recipes do 
     member do
       post 'save', to: 'recipes#save_to_cookbook', as: :save_to_cookbook
-      delete 'remove', to:  'recipes#remove_from_cookbook', as: :remove_from_cookbook
     end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

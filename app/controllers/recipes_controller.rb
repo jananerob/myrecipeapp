@@ -1,37 +1,37 @@
 class RecipesController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
-  before_action :set_recipe, only: [:show, :edit, :update, :destroy, :save_to_cookbook, :remove_from_cookbook]
+  before_action :set_recipe, only: [:show, :edit, :update, :destroy, :save_to_cookbook]
   before_action :authorize_owner!, only: [:edit, :update, :destroy]
   
   # GET /recipes
   def index
-    @recipes = Recipe.where(is_private: false)
+    @recipes = Recipe.where(is_private: false, parent_id: nil)
     if user_signed_in? 
-      @recipes = @recipes.or(Recipe.where(user: current_user))
+      @recipes = @recipes.or(Recipe.where(user: current_user, parent_id: nil))
     end
   end
 
   def my_recipes
-    @recipes = current_user.recipes
+    @recipes = current_user.recipes.where(parent_id: nil).or(current_user.recipes.where(edited_by_copyist: true))
   end
 
   def save_to_cookbook
-    current_user.my_cookbooks.create!(recipe: @recipe)
+    if @recipe.user == current_user
+      redirect_to @recipe, alert: "This is already your recipe!"
+      return
+    end
 
-    redirect_to @recipe, notice: "Recipe was successfully saved to your cookbook."
+    @new_recipe = @recipe.duplicate_for(current_user)
 
-  rescue ActiveRecord::RecordInvalid
-
-    redirect_to @recipe, alert: "Recipe has already been saved to your cookbook."
+    if @new_recipe.save
+      redirect_to @new_recipe, notice: "Recipe was successfully copied to your cookbook."
+    else
+      redirect_to @recipe, alert: "Failed to copy recipe."
+    end
   end
 
-  def remove_from_cookbook
-    current_user.my_cookbooks.find_by!(recipe: @recipe).destroy
-
-    redirect_to @recipe, notice: "Recipe was successfully removed from your cookbook."
-  end
   def cookbook
-    @recipes = current_user.saved_recipes
+    @recipes = current_user.recipes.where.not(parent_id: nil).where(edited_by_copyist: false)
   end
   # GET /recipes/1
   def show
@@ -76,6 +76,7 @@ class RecipesController < ApplicationController
     ingredient_data = params.dig(:recipe, :recipe_ingredients_data) || []
 
     Recipe.transaction do
+      @recipe.edited_by_copyist = true if @recipe.parent_id
       @recipe.update!(recipe_params)
         process_ingredients_for(@recipe)
 

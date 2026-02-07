@@ -16,4 +16,21 @@ class Recipe < ApplicationRecord
   has_many :my_cookbooks, dependent: :destroy
   has_many :users_who_saved, through: :my_cookbooks, source: :user
   
+  def duplicate_for(new_user)
+    new_recipe = self.dup
+    new_recipe.user = new_user
+    new_recipe.parent_id = self.id 
+    new_recipe.edited_by_copyist = false
+
+    self.recipe_ingredients.each do |ri|
+     new_recipe.recipe_ingredients.build(
+      ingredient_id: ri.ingredient_id,
+      amount: ri.amount,
+      unit: ri.unit
+     )       
+    end
+
+    new_recipe
+  end
+
 end
