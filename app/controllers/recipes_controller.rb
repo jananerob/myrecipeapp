@@ -6,23 +6,26 @@ class RecipesController < ApplicationController
   # GET /recipes
   def index
     @recipes = Recipe.where(is_private: false, parent_id: nil)
+    
     if user_signed_in? 
       @recipes = @recipes.or(Recipe.where(user: current_user, parent_id: nil))
     end
 
     if params[:tag_ids].present?
-
       selected_ids = params[:tag_ids].compact_blank
       
       if selected_ids.any?
         tag_count = selected_ids.size
 
         @recipes = @recipes.joins(:tags)
-                          .where(tags: {id: selected_ids})
+                          .where(tags: { id: selected_ids })
                           .group('recipes.id')
                           .having('COUNT(tags.id) = ?', tag_count)
-       end
+      end
+    end
 
+    if params[:query].present?
+      @recipes = @recipes.where("title LIKE ?", "%#{params[:query]}%")
     end
   end
 
