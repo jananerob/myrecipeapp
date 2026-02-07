@@ -137,6 +137,3 @@ class RecipesController < ApplicationController
     end
   end
 end
-
-# git commmit -m 'JavaScript fix, JS duplikácia, Transaction + Rescue, UX'
-
