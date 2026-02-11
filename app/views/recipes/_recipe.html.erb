@@ -17,7 +17,7 @@
     <div class="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
       <span class="flex items-center">⏱ Prep time: <strong class="ml-1 text-gray-900"><%= recipe.prep_time %> min</strong></span>
       <span class="flex items-center">🔥 Cook time: <strong class="ml-1 text-gray-900"><%= recipe.cook_time %> min</strong></span>
-      <span class="flex items-center">🔒 Private: <strong class="ml-1 text-gray-900"><%= recipe.is_private ? 'Yes' : 'No' %></strong></span>
+      <span class="flex items-center">🔒 Visibility: <strong class="ml-1 text-gray-900"><%= recipe.is_private ? 'Private' : 'Public' %></strong></span>
       <span class="flex items-center">🍽 Calories: <strong class="ml-1 text-gray-900"><%= recipe.calories.presence || "-" %> kcal</strong></span>
     </div>
   </div>

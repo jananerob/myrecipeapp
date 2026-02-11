@@ -145,8 +145,6 @@ class RecipesController < ApplicationController
       )
     end
   end
-  
-  private
 
   def apply_filters(scope)
     
