@@ -7,14 +7,14 @@ class Recipe < ApplicationRecord
   validates :title, :instructions, :prep_time, :cook_time, presence: true
   validates :prep_time, :cook_time, numericality: { greater_than: 0 }
 
+  belongs_to :parent, class_name: "Recipe", optional: true
+  has_many :copies, class_name: "Recipe", foreign_key: "parent_id"
+
   has_many :recipe_ingredients, dependent: :destroy
   has_many :ingredients, through: :recipe_ingredients
 
   has_many :recipe_tags, dependent: :destroy
   has_many :tags, through: :recipe_tags
-
-  has_many :my_cookbooks, dependent: :destroy
-  has_many :users_who_saved, through: :my_cookbooks, source: :user
   
   def duplicate_for(new_user)
     new_recipe = self.dup

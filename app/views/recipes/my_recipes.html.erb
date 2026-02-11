@@ -12,6 +12,8 @@
               class: 'bg-orange-400 hover:bg-orange-500 text-white font-bold py-2.5 px-6 rounded-lg text-sm shadow-sm transition duration-200 transform hover:scale-105 active:scale-95' %>
   </div>
 
+  <div><%= render 'filter_form', target_path: my_recipes_path %></div>
+
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <% if @recipes.any? %>
       <%= render partial: 'recipes/recipe_card', collection: @recipes, as: :recipe %>

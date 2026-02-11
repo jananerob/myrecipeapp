@@ -10,27 +10,14 @@ class RecipesController < ApplicationController
     if user_signed_in? 
       @recipes = @recipes.or(Recipe.where(user: current_user, parent_id: nil))
     end
-
-    if params[:tag_ids].present?
-      selected_ids = params[:tag_ids].compact_blank
-      
-      if selected_ids.any?
-        tag_count = selected_ids.size
-
-        @recipes = @recipes.joins(:tags)
-                          .where(tags: { id: selected_ids })
-                          .group('recipes.id')
-                          .having('COUNT(tags.id) = ?', tag_count)
-      end
-    end
-
-    if params[:query].present?
-      @recipes = @recipes.where("title LIKE ?", "%#{params[:query]}%")
-    end
+    
+    @recipes = apply_filters(@recipes)
   end
 
   def my_recipes
     @recipes = current_user.recipes.where(parent_id: nil).or(current_user.recipes.where(edited_by_copyist: true))
+
+    @recipes = apply_filters(@recipes)
   end
 
   def save_to_cookbook
@@ -50,6 +37,9 @@ class RecipesController < ApplicationController
 
   def cookbook
     @recipes = current_user.recipes.where.not(parent_id: nil).where(edited_by_copyist: false)
+
+    @recipes = apply_filters(@recipes)
+
   end
   # GET /recipes/1
   def show
@@ -154,5 +144,29 @@ class RecipesController < ApplicationController
         unit: data[:unit]
       )
     end
+  end
+  
+  private
+
+  def apply_filters(scope)
+    
+    if params[:query].present?
+      scope = scope.where("title LIKE ?", "%#{params[:query]}%")
+    end
+
+    if params[:tag_ids].present?
+      selected_ids = params[:tag_ids].compact_blank
+      
+      if selected_ids.any?
+        tag_count = selected_ids.size
+
+        scope = scope.joins(:tags)
+                          .where(tags: { id: selected_ids })
+                          .group('recipes.id')
+                          .having('COUNT(tags.id) = ?', tag_count)
+      end
+    end
+
+    scope
   end
 end

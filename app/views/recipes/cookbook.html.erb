@@ -14,6 +14,8 @@
     <% end %>
   </div>
 
+  <div><%= render 'filter_form', target_path: cookbook_path %></div>
+
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <% if @recipes.any? %>
       <%= render partial: 'recipes/recipe_card', collection: @recipes, as: :recipe %>

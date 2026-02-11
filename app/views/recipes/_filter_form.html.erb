@@ -1,0 +1,39 @@
+<div class="max-w-4xl mx-auto mb-12 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm text-center">
+  <%= form_with url: target_path, method: :get, local: true, class: "space-y-4" do |f| %>
+    <%= f.text_field :query, 
+      value: params[:query], 
+      placeholder: "Search recipes by title...",
+      class: "w-full max-w-md mx-auto block px-4 py-3 rounded-xl border-2 border-orange-100 focus:border-orange-400 focus:ring-2 focus:ring-orange-200 outline-none transition duration-200 placeholder:text-gray-300 shadow-sm mb-8" %>
+
+    <div class="relative py-4">
+      <div class="absolute inset-0 flex items-center" aria-hidden="true">
+        <div class="w-full border-t border-gray-100"></div>
+      </div>
+      <div class="relative flex justify-center text-sm uppercase tracking-widest">
+        <span class="bg-white px-4 text-gray-400 font-bold">Or filter by tags</span>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-4 justify-center">
+      <%= f.collection_check_boxes :tag_ids, Tag.order(:name), :id, :name do |b| %>
+        <label class="flex items-center space-x-2 cursor-pointer group">
+          <%= b.check_box(
+                checked: Array(params[:tag_ids]).include?(b.value.to_s),
+                class: "w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-400"
+              ) %>
+          <span class="text-gray-700 group-hover:text-orange-600 transition">
+            <%= b.text %>
+          </span>
+        </label>
+      <% end %>
+    </div>
+
+    <div class="flex gap-3 pt-4 border-t border-gray-50 justify-center">
+      <%= f.submit "Filter Recipes", class: "bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-lg shadow-sm transition duration-200" %>
+
+      <%# Tlačidlo na zrušenie filtrov %>
+      <%= link_to "Clear All", target_path, class: "bg-gray-100 hover:bg-gray-200 text-gray-600 py-2 px-6 rounded-lg transition" %>
+    </div>
+
+  <% end %>
+</div>
