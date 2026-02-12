@@ -1,7 +1,7 @@
 class Recipe < ApplicationRecord
   has_one_attached :image, dependent: :purge_later
 
-  attr_accessor :remove_image
+  attr_accessor :remove_image, :recalculate_calories
 
   belongs_to :user
   validates :title, :instructions, :prep_time, :cook_time, presence: true
@@ -11,6 +11,8 @@ class Recipe < ApplicationRecord
   has_many :copies, class_name: "Recipe", foreign_key: "parent_id"
 
   has_many :recipe_ingredients, dependent: :destroy
+  validates_associated :recipe_ingredients
+
   has_many :ingredients, through: :recipe_ingredients
 
   has_many :recipe_tags, dependent: :destroy

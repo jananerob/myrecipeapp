@@ -16,4 +16,5 @@ class RecipeIngredient < ApplicationRecord
 
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :unit, presence: true
+  validates :ingredient_id, presence: true
 end

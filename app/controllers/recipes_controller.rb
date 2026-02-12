@@ -59,53 +59,46 @@ class RecipesController < ApplicationController
     ingredient_data = params.dig(:recipe, :recipe_ingredients_data) || []
 
     Recipe.transaction do 
-      @recipe = current_user.recipes.build(recipe_params)
-      @recipe.save!
+      @recipe = current_user.recipes.build(recipe_params.except(:recipe_ingredients_data))
       process_ingredients_for(@recipe)
-      redirect_to @recipe, notice: "Recipe was successfully created."
+      
+      if @recipe.valid?
+        calculate_calories if @recipe.calories.blank?
+        @recipe.save!
+
+        redirect_to @recipe, notice: "Recipe was successfully created."
+      else
+        raise ActiveRecord::RecordInvalid.new(@recipe)
+      end
     end
 
-  rescue ActiveRecord::RecordInvalid => e
-    @recipe.recipe_ingredients.target.clear
-
-    ingredient_data.each do |data|
-      @recipe.recipe_ingredients.build(data.permit(:ingredient_id, :amount, :unit))
-    end
-    
-    if e.record.is_a?(RecipeIngredient)
-      @recipe.errors.add(:base, "Ingredient error: #{e.record.errors.full_messages.to_sentence}")
-    end
-    
-    render :new, status: :unprocessable_entity
+  rescue ActiveRecord::RecordInvalid
+    handle_recipe_error(ingredient_data)
   end
 
-  # PATCH/PUT /recipes/1
+# PATCH/PUT /recipes/1
   def update
     ingredient_data = params.dig(:recipe, :recipe_ingredients_data) || []
 
     Recipe.transaction do
       @recipe.edited_by_copyist = true if @recipe.parent_id
-      @recipe.update!(recipe_params)
-        process_ingredients_for(@recipe)
+      @recipe.assign_attributes(recipe_params.except(:recipe_ingredients_data))
+      process_ingredients_for(@recipe)
 
+      if @recipe.valid?
         @recipe.image.purge if params[:recipe][:remove_image] == '1'
+        calculate_calories if params[:recipe][:recalculate_calories] == '1'
+        
+        @recipe.save!
         
         redirect_to @recipe, notice: "Recipe was successfully updated.", status: :see_other
-      end
-
-  rescue ActiveRecord::RecordInvalid => e
-
-    @recipe.recipe_ingredients.target.clear
-
-    ingredient_data.each do |data|
-      @recipe.recipe_ingredients.build(data.permit(:ingredient_id, :amount, :unit))
+      else
+        raise ActiveRecord::RecordInvalid.new(@recipe)
+      end        
     end
 
-    if e.record.is_a?(RecipeIngredient)
-      @recipe.errors.add(:base, "Ingredient error: #{e.record.errors.full_messages.to_sentence}")
-    end
-
-    render :edit, status: :unprocessable_entity    
+  rescue ActiveRecord::RecordInvalid
+    handle_recipe_error(ingredient_data)
   end
 
   # DELETE /recipes/1
@@ -126,19 +119,23 @@ class RecipesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def recipe_params
-    params.require(:recipe).permit(:title, :instructions, :prep_time, :cook_time, :image, :remove_image, :is_private, :calories, tag_ids: [])
+    params.require(:recipe).permit(
+      :title, :instructions, :prep_time, :cook_time, :image, :remove_image, :is_private, :calories, :recalculate_calories, tag_ids: [], 
+      recipe_ingredients_data: [:id, :ingredient_id, :amount, :unit, :_destroy]
+      )
   end
 
   def process_ingredients_for(recipe)
     ingredient_data = params.dig(:recipe, :recipe_ingredients_data) || []
 
-    recipe.recipe_ingredients.destroy_all
+    recipe.recipe_ingredients.destroy_all if recipe.persisted?
 
     ingredient_data.each do |data|
-      next if data[:ingredient_id].blank?
+      is_completely_empty = data[:ingredient_id].blank? && data[:amount].blank? && data[:unit].blank?
+      
+      next if is_completely_empty || data[:_destroy] == "1"
 
-      RecipeIngredient.create!(
-        recipe: recipe,
+      recipe.recipe_ingredients.build(
         ingredient_id: data[:ingredient_id],
         amount: data[:amount],
         unit: data[:unit]
@@ -167,4 +164,32 @@ class RecipesController < ApplicationController
 
     scope
   end
+
+  def calculate_calories
+    calculated_calories = CalorieCalculatorService.new(@recipe).call
+    @recipe.calories = calculated_calories if calculated_calories
+  end
+
+  def handle_recipe_error(ingredient_data)
+    @recipe.recipe_ingredients.target.clear
+    ingredient_data.each do |data|
+      @recipe.recipe_ingredients.build(data.permit(:ingredient_id, :amount, :unit))
+    end
+    
+    @recipe.valid?
+    @recipe.errors.delete(:recipe_ingredients)
+
+    all_ingredient_errors = []
+    @recipe.recipe_ingredients.each do |ri|
+      unless ri.valid?
+        all_ingredient_errors << "Ingredient error: #{ri.errors.full_messages.to_sentence}"
+      end
+    end
+    
+    all_ingredient_errors.uniq.each do |msg|
+      @recipe.errors.add(:base, msg)
+    end
+    render (action_name == 'create' ? :new : :edit), status: :unprocessable_entity
+  end
+
 end

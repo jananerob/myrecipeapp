@@ -18,7 +18,7 @@
       <span class="flex items-center">⏱ Prep time: <strong class="ml-1 text-gray-900"><%= recipe.prep_time %> min</strong></span>
       <span class="flex items-center">🔥 Cook time: <strong class="ml-1 text-gray-900"><%= recipe.cook_time %> min</strong></span>
       <span class="flex items-center">🔒 Visibility: <strong class="ml-1 text-gray-900"><%= recipe.is_private ? 'Private' : 'Public' %></strong></span>
-      <span class="flex items-center">🍽 Calories: <strong class="ml-1 text-gray-900"><%= recipe.calories.presence || "-" %> kcal</strong></span>
+      <span class="flex items-center">🍽 Calories per 100 g: <strong class="ml-1 text-gray-900"><%= recipe.calories.presence || "-" %> kcal</strong></span>
     </div>
   </div>
 
@@ -41,7 +41,7 @@
           <% if recipe.user != current_user %>
             <% user_copy = current_user.recipes.find_by(parent_id: recipe.id) %>
             <% if user_copy %>
-              <div div class="flex items-center space-x-3">
+              <div class="flex items-center space-x-3">
                 <span class="bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 px-6 rounded-lg text-sm shadow-sm transition duration-200 transform hover:scale-105 active:scale-95">Saved! ✔️</span>
                 <%= button_to 'Remove from my cookbook', 
                               recipe_path(user_copy), 
@@ -87,7 +87,7 @@
       </div>
     </div>
 
-    <%# Tagy naspodu %>
+    <%# Tagy %>
     <div class="mt-12 pt-6 border-t border-gray-100">
       <h3 class="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Tags</h3>
       <div class="flex flex-wrap gap-2 justify-center">
@@ -98,7 +98,7 @@
             </span>
           <% end %>
         <% else %>
-          <p class="text-xs text-stone-400 italic">No tags added so far.</p>
+          <p class="text-xs text-stone-400">No tags added so far.</p>
         <% end %>
       </div>
     </div>

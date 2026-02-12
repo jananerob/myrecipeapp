@@ -15,7 +15,7 @@
   <%# Základné údaje %>
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <div class="md:col-span-3">
-      <%= form.label :title, class: "block text-sm font-medium text-orange-900 mb-1" %>
+      <%= form.label :title, class: "block text-sm font-semibold text-orange-900 mb-1" %>
       <%= form.text_field :title, class: "appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-orange-400 focus:border-orange-400 focus:z-10 sm:text-sm" %>
     </div>
 
@@ -41,15 +41,15 @@
 
   <%# Ingrediencie %>
   <div class="pt-6 border-t border-orange-50">
-    <h3 class="text-lg font-bold text-orange-900 mb-4 flex items-center">
+    <h3 class="text-lg font-semibold text-orange-900 mb-4 flex items-center">
       <span class="mr-2 text-orange-400">🥕</span> Ingredients
     </h3>
 
     <%# "Header" tabuľky s ingredienciami %>
     <div class="grid grid-cols-12 gap-4 px-2 mb-2 border-b border-orange-100 pb-1">
-      <div class="col-span-6 text-xs font-bold text-orange-900 uppercase text-center">Ingredient</div>
-      <div class="col-span-2 text-xs font-bold text-orange-900 uppercase text-center">Amount</div>
-      <div class="col-span-2 text-xs font-bold text-orange-900 uppercase text-center">Unit</div>
+      <div class="col-span-6 text-xs font-semibold text-orange-900 uppercase text-center">Ingredient</div>
+      <div class="col-span-2 text-xs font-semibold text-orange-900 uppercase text-center">Amount</div>
+      <div class="col-span-2 text-xs font-semibold text-orange-900 uppercase text-center">Unit</div>
       <div class="col-span-2"></div>
     </div>
 
@@ -72,22 +72,45 @@
     </button>
   </div>
 
-  <%# Tagy a Súkromie %>
-  <div class="pt-6 border-t border-orange-50 grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div>
-      <%= form.label :tag_ids, 'Tags', class: "block text-sm font-semibold text-orange-900 mb-1" %>
-      <%= form.select :tag_ids, Tag.order(:name).map { |t| [t.name, t.id] }, { include_blank: 'Select tags' }, { multiple: true, class: "w-full rounded-lg border-orange-200 focus:border-orange-400 focus:ring focus:ring-orange-200 focus:ring-opacity-50 min-h-[100px]" } %>
-    </div>
-
+  <%# Súkromie a Kalórie %>
+  <div class="grid grid-cols-1 <%= recipe.persisted? ? 'md:grid-cols-2' : 'md:grid-cols-1' %> gap-4 mt-6">
     <div class="flex items-center space-x-3 bg-orange-50 p-4 rounded-xl self-start border border-orange-100">
       <%= form.check_box :is_private, class: "h-5 w-5 text-orange-500 focus:ring-orange-400 border-orange-300 rounded" %>
       <%= form.label :is_private, "Private recipe (Only you will see this)", class: "text-sm font-medium text-orange-900" %>
+    </div>
+    <% if recipe.persisted? %>
+      <div class="flex items-center space-x-3 bg-orange-50 p-4 rounded-xl self-start border border-orange-100">
+        <%= form.check_box :recalculate_calories, class: "h-5 w-5 text-orange-500 focus:ring-orange-400 border-orange-300 rounded" %>
+        <%= form.label :recalculate_calories, "Recalculate calories?", class: "text-sm font-medium text-orange-900" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Tagy %>
+  <div class="pt-6 border-t border-orange-50">
+    <%# Nadpis na samostatnom riadku %>
+    <h3 class="text-sm font-semibold text-orange-900 mb-2">Tags</h3>
+
+    <%# Deliaca čiara cez celú šírku %>
+    <div class="w-full border-t border-orange-100 mb-6"></div>
+    <div class="flex flex-wrap gap-4 justify-center">
+      <%= form.collection_check_boxes :tag_ids, Tag.order(:name), :id, :name do |b| %>
+        <label class="flex items-center space-x-2 cursor-pointer group">
+          <%= b.check_box(
+                checked: Array(params[:tag_ids]).include?(b.value.to_s),
+                class: "w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-400"
+              ) %>
+          <span class="text-gray-700 group-hover:text-orange-600 transition">
+            <%= b.text %>
+          </span>
+        </label>
+      <% end %>
     </div>
   </div>
 
   <%# Foto receptu %>
   <div class="pt-6 border-t border-orange-50">
-    <%= form.label :image, "Recipe photo", class: "block text-orange-900 font-bold mb-2" %>
+    <%= form.label :image, "Recipe photo", class: "block text-orange-900 font-semibold mb-2" %>
 
     <% if @recipe.image.attached? && @recipe.image.persisted? %>
       <div class="flex items-center space-x-4 mb-4 bg-orange-50 p-3 rounded-xl border border-orange-100">
