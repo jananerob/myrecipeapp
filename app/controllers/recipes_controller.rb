@@ -63,11 +63,8 @@ class RecipesController < ApplicationController
       process_ingredients_for(@recipe)
       
       if @recipe.valid?
-        if @recipe.calories.blank?
         calculate_calories          
-        end
         @recipe.save!
-
         redirect_to @recipe, notice: "Recipe was successfully created."
       else
         raise ActiveRecord::RecordInvalid.new(@recipe)
@@ -89,7 +86,7 @@ class RecipesController < ApplicationController
 
       if @recipe.valid?
         @recipe.image.purge if params[:recipe][:remove_image] == '1'
-        calculate_calories if params[:recipe][:recalculate_calories] == '1'
+        calculate_calories
         
         @recipe.save!
         
@@ -168,10 +165,13 @@ class RecipesController < ApplicationController
   end
 
   def calculate_calories
-    calculated_calories = Gemini::CalorieCalculatorService.new(@recipe).call
-    @recipe.calories = calculated_calories if calculated_calories
+    should_calculate = @recipe.calories.blank? || params.dig(:recipe, :recalculate_calories) == '1'
+    if should_calculate
+      calculated_calories = Gemini::CalorieCalculatorService.new(@recipe).call
+      @recipe.calories = calculated_calories if calculated_calories
+    end
   end
-
+ 
   def handle_recipe_error(ingredient_data)
     @recipe.recipe_ingredients.target.clear
     ingredient_data.each do |data|
