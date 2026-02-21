@@ -63,7 +63,9 @@ class RecipesController < ApplicationController
       process_ingredients_for(@recipe)
       
       if @recipe.valid?
-        calculate_calories if @recipe.calories.blank?
+        if @recipe.calories.blank?
+        calculate_calories          
+        end
         @recipe.save!
 
         redirect_to @recipe, notice: "Recipe was successfully created."
@@ -166,7 +168,7 @@ class RecipesController < ApplicationController
   end
 
   def calculate_calories
-    calculated_calories = CalorieCalculatorService.new(@recipe).call
+    calculated_calories = Gemini::CalorieCalculatorService.new(@recipe).call
     @recipe.calories = calculated_calories if calculated_calories
   end
 
