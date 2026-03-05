@@ -88,19 +88,26 @@
 
   <%# Tagy %>
   <div class="pt-6 border-t border-orange-50">
-    <%# Nadpis na samostatnom riadku %>
-    <h3 class="text-sm font-semibold text-orange-900 mb-2">Tags</h3>
+    <%# Nadpis zarovnaný na stred, presne ako na filtri %>
+    <h3 class="text-xs font-semibold text-orange-900 mb-6 uppercase tracking-wider text-center">
+      or filter by tags
+    </h3>
 
-    <%# Deliaca čiara cez celú šírku %>
-    <div class="w-full border-t border-orange-100 mb-6"></div>
-    <div class="flex flex-wrap gap-4 justify-center">
+    <%# Kontajner pre tagy s centrovaním %>
+    <div class="flex flex-wrap gap-x-6 gap-y-3 justify-center max-w-xl mx-auto">
+      <%# 1. TRICK: Hidden field pre zmazanie tagov %>
+      <%= hidden_field_tag "recipe[tag_ids][]", "" %>
+
       <%= form.collection_check_boxes :tag_ids, Tag.order(:name), :id, :name do |b| %>
+        <%# Vrátenie labelu do jednoduchého štýlu bez bubliny %>
         <label class="flex items-center space-x-2 cursor-pointer group">
+          <%# OPRAVA: checked kontroluje dáta receptu, class je len pre checkbox %>
           <%= b.check_box(
-                checked: Array(params[:tag_ids]).include?(b.value.to_s),
-                class: "w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-400"
+                checked: recipe.tag_ids.include?(b.value),
+                class: "w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-400 cursor-pointer"
               ) %>
-          <span class="text-gray-700 group-hover:text-orange-600 transition">
+          <%# Názov tagu, malý text %>
+          <span class="text-gray-700 group-hover:text-orange-600 transition text-xs font-medium">
             <%= b.text %>
           </span>
         </label>

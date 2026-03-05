@@ -4,6 +4,7 @@ class RecipesController < ApplicationController
   before_action :authorize_owner!, only: [:edit, :update, :destroy]
   
   # GET /recipes
+=begin
   def index
     @recipes = Recipe.where(is_private: false, parent_id: nil)
     
@@ -11,6 +12,17 @@ class RecipesController < ApplicationController
       @recipes = @recipes.or(Recipe.where(user: current_user, parent_id: nil))
     end
     
+    @recipes = apply_filters(@recipes)
+  end
+=end
+
+  def index
+    @recipes = Recipe.where(parent_id: nil)
+
+    unless user_signed_in?
+      @recipes = @recipes.where(is_private: false)
+    end
+
     @recipes = apply_filters(@recipes)
   end
 
@@ -43,6 +55,9 @@ class RecipesController < ApplicationController
   end
   # GET /recipes/1
   def show
+    if @recipe.is_private && !user_signed_in?
+      redirect_to recipes_path, alert: "Please log in to view private recipes."
+    end
   end
 
   # GET /recipes/new

@@ -1,17 +1,36 @@
 <div class="container mx-auto p-4">
-  <% if user_signed_in?  %>
-    <h1 class="text-3xl font-bold mb-6 text-gray-800">
+  <%# Zobrazí sa len vtedy, ak práve prebehlo prihlásenie %>
+  <% if user_signed_in? && flash[:notice] == "Signed in successfully." %>
+    <h1 class="text-3xl font-bold mb-6 text-gray-800 animate-fade-out">
       Welcome, <%= current_user.first_name %>!
-      <span class="text-sm font-normal text-gray-500"></span>
     </h1>
   <% end %>
 
-  <% if user_signed_in? %>
-    <div class="flex justify-start mt-8 mb-8 pt-6 border-t border-gray-100">
-      <%= button_to 'Log out', destroy_user_session_path, method: :delete, class: 'bg-orange-400 hover:bg-orange-500 text-white font-bold py-2.5 px-6 rounded-lg text-sm shadow-sm transition duration-200 transform hover:scale-105 active:scale-95' %>
-    </div>
+  <h2 class="text-3xl font-bold mb-6 text-gray-800">
+    Latest recipes
+  </h2>
+  <span class="text-sm font-normal text-gray-500"></span>
+</h1>
+
+<div id="recipes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+  <% if @latest_recipes.any? %>
+    <% @latest_recipes.each do |recipe| %>
+      <%= render 'recipes/recipe_card', recipe: recipe %>
+    <% end %>
   <% else %>
-    <div class="flex justify-start mt-8 mb-8 pt-6 border-t border-gray-100">
-      <%= link_to 'Log in', new_user_session_path, class: 'bg-orange-400 hover:bg-orange-500 text-white font-bold py-2.5 px-6 rounded-lg text-sm shadow-sm transition duration-200 transform hover:scale-105 active:scale-95' %>
+    <div class="col-span-full text-center py-10">
+      <p class="text-gray-500">No recipes available yet.</p>
     </div>
   <% end %>
+</div>
+
+<% if user_signed_in? %>
+  <div class="flex justify-start mt-8 mb-8 pt-6 border-t border-gray-100">
+    <%= button_to 'Log out', destroy_user_session_path, method: :delete, class: 'bg-orange-400 hover:bg-orange-500 text-white font-bold py-2.5 px-6 rounded-lg text-sm shadow-sm transition duration-200 transform hover:scale-105 active:scale-95' %>
+  </div>
+<% else %>
+  <div class="flex justify-start mt-8 mb-8 pt-6 border-t border-gray-100">
+    <%= link_to 'Log in', new_user_session_path, class: 'bg-orange-400 hover:bg-orange-500 text-white font-bold py-2.5 px-6 rounded-lg text-sm shadow-sm transition duration-200 transform hover:scale-105 active:scale-95' %>
+  </div>
+<% end %>
+</div>

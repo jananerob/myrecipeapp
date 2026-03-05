@@ -13,8 +13,6 @@ Rails.application.routes.draw do
   get 'cookbook', to: 'recipes#cookbook', as: :cookbook
 
   get "up" => "rails/health#show", as: :rails_health_check
-  get 'project-plan', to: 'pages#plan', as: :project_plan
-  get 'project-notes', to: 'pages#notes', as: :project_notes
 
 # Defines the root path route ("/")
   root "pages#home"

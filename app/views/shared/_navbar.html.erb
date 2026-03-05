@@ -1,10 +1,15 @@
 <nav class="fixed top-0 left-0 right-0 z-50 bg-orange-100 border-b border-orange-200 shadow-sm">
   <div class="container mx-auto flex justify-between items-center p-4">
 
-    <%= link_to 'RecipeApp', root_path, class: 'text-xl font-bold text-gray-800 hover:text-orange-600' %>
+    <%# Upravená časť s názvom a mottom %>
+    <div class="flex flex-col">
+      <%= link_to 'Co-Cook', root_path, class: 'text-xl font-bold text-gray-800 hover:text-orange-600 leading-none' %>
+      <span class="text-[9px] font-bold text-orange-500 uppercase tracking-[0.2em] mt-1">
+        Cook. Share. Remix.
+      </span>
+    </div>
 
-    <ul class="flex space-x-6">
-
+    <ul class="flex space-x-6 items-center">
       <li>
         <%= link_to 'Home', root_path, class: "text-gray-700 hover:text-orange-600 #{'font-bold border-b-2 border-orange-600' if current_page?(root_path)}" %>
       </li>
@@ -35,3 +40,6 @@
 
   </div>
 </nav>
+
+<%# Odsadenie, aby ti obsah nezačínal pod navbarom %>
+<div class="h-10"></div>
