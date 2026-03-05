@@ -8,7 +8,5 @@ class PagesController < ApplicationController
     @latest_recipes =  @latest_recipes.order(created_at: :desc).limit(3)
   end
 
-  def notes
-  end
   
 end
